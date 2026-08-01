@@ -1,0 +1,24 @@
+# ============================================================
+# QUAN TRỌNG — chặn dữ liệu cá nhân bị đẩy lên GitHub công khai
+# File sao lưu chứa toàn bộ giao dịch, ảnh hóa đơn của bạn.
+# ============================================================
+sao-luu-chi-tieu-*.json
+giao-dich-*.csv
+*.backup.json
+/du-lieu/
+/backup/
+
+# Cấu hình chạy thử cục bộ (chứa đường dẫn riêng của máy này)
+.claude/
+
+# Rác của hệ điều hành / trình soạn thảo
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
+
+# File biên dịch tạm của Java (tools/MakeIcons.java chạy trực tiếp, không cần .class)
+*.class

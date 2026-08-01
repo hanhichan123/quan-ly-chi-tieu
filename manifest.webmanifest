@@ -1,0 +1,51 @@
+{
+  "name": "Quản lý Chi tiêu & Công việc",
+  "short_name": "Chi tiêu",
+  "description": "Quản lý chi tiêu và công việc hàng ngày, tuần, tháng. Có hạn mức, biểu đồ và cảnh báo vượt mức. Hoạt động offline, dữ liệu chỉ lưu trong máy.",
+  "lang": "vi",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f7f9",
+  "theme_color": "#2563eb",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Thêm giao dịch",
+      "short_name": "Thêm",
+      "url": "./index.html#/tx"
+    },
+    {
+      "name": "Công việc",
+      "short_name": "Việc",
+      "url": "./index.html#/tasks"
+    },
+    {
+      "name": "Thống kê",
+      "short_name": "Thống kê",
+      "url": "./index.html#/stats"
+    }
+  ]
+}

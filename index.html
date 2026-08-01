@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<title>Quản lý Chi tiêu</title>
+<meta name="description" content="Quản lý chi tiêu và công việc hàng ngày, tuần, tháng — hoạt động offline.">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Chi tiêu">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Thanh trên cùng -->
+  <header class="appbar">
+    <div class="appbar__row">
+      <h1 class="appbar__title" id="screenTitle">Tổng quan</h1>
+      <div class="appbar__actions" id="screenActions"></div>
+    </div>
+    <div class="periodbar" id="periodBar">
+      <div class="segmented" role="tablist" aria-label="Chọn kỳ xem">
+        <button type="button" role="tab" data-period="day"   aria-selected="false">Ngày</button>
+        <button type="button" role="tab" data-period="week"  aria-selected="false">Tuần</button>
+        <button type="button" role="tab" data-period="month" aria-selected="true">Tháng</button>
+      </div>
+      <div class="periodnav">
+        <button type="button" class="icon-btn" id="periodPrev" aria-label="Kỳ trước">‹</button>
+        <span class="periodnav__label" id="periodLabel">—</span>
+        <button type="button" class="icon-btn" id="periodNext" aria-label="Kỳ sau">›</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Nội dung màn hình -->
+  <main class="main" id="screen" tabindex="-1"></main>
+
+  <!-- Nút thêm nhanh -->
+  <button type="button" class="fab" id="fab" aria-label="Thêm giao dịch mới">+</button>
+
+  <!-- Thanh công cụ chọn menu -->
+  <nav class="tabbar" aria-label="Menu chính">
+    <a href="#/home"     data-tab="home"><span class="ico" aria-hidden="true">🏠</span>Tổng quan</a>
+    <a href="#/tx"       data-tab="tx"><span class="ico" aria-hidden="true">💴</span>Chi tiêu</a>
+    <a href="#/tasks"    data-tab="tasks"><span class="ico" aria-hidden="true">✅</span>Công việc</a>
+    <a href="#/stats"    data-tab="stats"><span class="ico" aria-hidden="true">📊</span>Thống kê</a>
+    <a href="#/settings" data-tab="settings"><span class="ico" aria-hidden="true">⚙️</span>Cài đặt</a>
+  </nav>
+
+</div>
+
+<div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="false"></div>
+<div id="modalRoot"></div>
+
+<script src="js/util.js"></script>
+<script src="js/dates.js"></script>
+<script src="js/money.js"></script>
+<script src="js/db.js"></script>
+<script src="js/seed.js"></script>
+<script src="js/state.js"></script>
+<script src="js/budget.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/photo.js"></script>
+<script src="js/recurring.js"></script>
+<script src="js/goals.js"></script>
+<script src="js/backup.js"></script>
+<script src="js/screens/home.js"></script>
+<script src="js/screens/transactions.js"></script>
+<script src="js/screens/tasks.js"></script>
+<script src="js/screens/stats.js"></script>
+<script src="js/screens/settings.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

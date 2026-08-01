@@ -1,0 +1,163 @@
+/* ===========================================================
+   tokens.css — Biến thiết kế dùng chung (màu, khoảng cách, chữ)
+   Bảng màu đơn giản, tương phản cao, tự đổi theo chế độ sáng/tối.
+   =========================================================== */
+
+:root {
+  /* --- Nền & bề mặt --- */
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef0f4;
+  --border: #dfe3e9;
+  --border-strong: #c6ccd6;
+
+  /* --- Chữ --- */
+  --text: #161a1f;
+  --text-dim: #5b6572;
+  --text-faint: #8a93a0;
+  --on-accent: #ffffff;
+
+  /* --- Màu chức năng --- */
+  --primary: #2563eb;
+  --primary-soft: #e6edfd;
+  --ok: #16a34a;
+  --ok-soft: #e3f5e9;
+  --warn: #d97706;
+  --warn-soft: #fdf0dc;
+  --danger: #dc2626;
+  --danger-soft: #fdeaea;
+  --income: #0f9488;
+  --income-soft: #ddf3f1;
+
+  /* --- Bảng màu hạng mục ---
+     Thứ tự cố định, không bao giờ xoay vòng. 8 màu đầu là 8 màu được
+     giãn tông và tách độ sáng nhiều nhất -> biểu đồ chỉ vẽ tối đa 8 lát,
+     phần còn lại gộp vào "Khác". Chú giải luôn ghi tên + số tiền nên
+     việc nhận diện không phụ thuộc riêng vào màu. */
+  --c1: #2563eb;  /* lam */
+  --c2: #ea580c;  /* cam */
+  --c3: #0f766e;  /* xanh mòng két đậm */
+  --c4: #db2777;  /* hồng sen */
+  --c5: #65a30d;  /* xanh cốm đậm */
+  --c6: #7c3aed;  /* tím */
+  --c7: #b45309;  /* nâu hổ phách */
+  --c8: #0891b2;  /* xanh lơ */
+  --c9: #be123c;  /* đỏ mận */
+  --c10: #4d7c0f; /* ô liu */
+  --c11: #6d28d9; /* tím đậm */
+  --c12: #64748b; /* xám đá */
+
+  /* --- Khoảng cách --- */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --s7: 32px;
+
+  /* --- Bo góc --- */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-full: 999px;
+
+  /* --- Đổ bóng --- */
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --shadow-2: 0 4px 12px rgba(16, 24, 40, 0.1);
+  --shadow-3: 0 12px 32px rgba(16, 24, 40, 0.18);
+
+  /* --- Chữ --- */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-num: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", monospace;
+
+  /* --- Kích thước layout --- */
+  --header-h: 56px;
+  --tabbar-h: 62px;
+  --maxw: 640px;
+}
+
+/* Chế độ tối: theo hệ thống, trừ khi người dùng ép sáng */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161a;
+    --surface: #1e2126;
+    --surface-2: #272b31;
+    --border: #333941;
+    --border-strong: #48505a;
+
+    --text: #edeff2;
+    --text-dim: #9ba5b2;
+    --text-faint: #79828e;
+
+    --primary: #5b8def;
+    --primary-soft: #1c2c4a;
+    --ok: #3fbf6b;
+    --ok-soft: #16301f;
+    --warn: #fbbf24;
+    --warn-soft: #3a2d10;
+    --danger: #f0564a;
+    --danger-soft: #3b1a18;
+    --income: #2dd4bf;
+    --income-soft: #10312e;
+
+    --c1: #60a5fa;
+    --c2: #fb923c;
+    --c3: #2dd4bf;
+    --c4: #f472b6;
+    --c5: #a3e635;
+    --c6: #a78bfa;
+    --c7: #d6a15c;
+    --c8: #22d3ee;
+    --c9: #fb7185;
+    --c10: #86efac;
+    --c11: #c4b5fd;
+    --c12: #94a3b8;
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
+    --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Chế độ tối: người dùng ép tối trong Cài đặt */
+:root[data-theme="dark"] {
+  --bg: #14161a;
+  --surface: #1e2126;
+  --surface-2: #272b31;
+  --border: #333941;
+  --border-strong: #48505a;
+
+  --text: #edeff2;
+  --text-dim: #9ba5b2;
+  --text-faint: #79828e;
+
+  --primary: #5b8def;
+  --primary-soft: #1c2c4a;
+  --ok: #3fbf6b;
+  --ok-soft: #16301f;
+  --warn: #fbbf24;
+  --warn-soft: #3a2d10;
+  --danger: #f0564a;
+  --danger-soft: #3b1a18;
+  --income: #2dd4bf;
+  --income-soft: #10312e;
+
+  --c1: #60a5fa;
+  --c2: #fb923c;
+  --c3: #2dd4bf;
+  --c4: #f472b6;
+  --c5: #a3e635;
+  --c6: #a78bfa;
+  --c7: #d6a15c;
+  --c8: #22d3ee;
+  --c9: #fb7185;
+  --c10: #86efac;
+  --c11: #c4b5fd;
+  --c12: #94a3b8;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
