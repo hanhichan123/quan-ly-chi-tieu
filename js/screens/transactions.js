@@ -35,6 +35,8 @@
         date: (tx && tx.date) || d.date || D.today(),
         note: (tx && tx.note) || '',
         photo: (tx && tx.photo) || null,
+        // Mặc định lấy phương thức dùng lần trước cho đỡ phải chọn lại
+        paymentId: (tx && tx.paymentId) || d.paymentId || st.S.settings.lastPaymentId || 'cash',
         createdAt: tx && tx.createdAt
       };
 
@@ -108,6 +110,31 @@
       body.appendChild(u.el('div', { class: 'field' }, [
         u.el('span', { class: 'field__label', text: 'Hạng mục' }),
         catBox
+      ]));
+
+      /* --- Phương thức thanh toán --- */
+      var payBox = u.el('div', { class: 'chips chips--scroll' });
+      var payList = st.pays();
+      payList.forEach(function (p) {
+        payBox.appendChild(u.el('button', {
+          class: 'chip', type: 'button',
+          'aria-pressed': String(model.paymentId === p.id),
+          title: p.jp || p.name,
+          onclick: function () {
+            model.paymentId = p.id;
+            u.$$('button', payBox).forEach(function (b, i) {
+              b.setAttribute('aria-pressed', String(payList[i].id === p.id));
+            });
+          }
+        }, [
+          // Tên nằm riêng một nút để bộ dịch song ngữ tra được
+          u.el('span', { text: p.emoji + ' ' }),
+          u.el('span', { text: p.name })
+        ]));
+      });
+      body.appendChild(u.el('div', { class: 'field' }, [
+        u.el('span', { class: 'field__label', text: 'Thanh toán bằng' }),
+        payBox
       ]));
 
       /* --- Ngày --- */
@@ -225,6 +252,7 @@
           id: model.id, type: model.type, amount: amount,
           categoryId: model.categoryId, date: dateInput.value,
           note: noteInput.value.trim(), photo: model.photo,
+          paymentId: model.paymentId,
           createdAt: model.createdAt
         };
 
@@ -243,6 +271,7 @@
           if (!ok) return;
           return st.saveTx(rec)
             .then(function (saved) { return st.rememberQuickPick(saved); })
+            .then(function () { return st.setSetting('lastPaymentId', rec.paymentId); })
             .then(function () {
               u.toast(isEdit ? 'Đã cập nhật' : 'Đã lưu ' + M.format(amount), 'ok');
               handle.close();
@@ -297,7 +326,7 @@
      MÀN HÌNH DANH SÁCH CHI TIÊU
      ========================================================= */
 
-  var filter = { type: 'all', categoryId: null, q: '' };
+  var filter = { type: 'all', categoryId: null, paymentId: null, q: '' };
 
   App.screens.tx = {
     title: 'Chi tiêu',
@@ -319,6 +348,7 @@
         var shown = list.filter(function (t) {
           if (filter.type !== 'all' && t.type !== filter.type) return false;
           if (filter.categoryId && t.categoryId !== filter.categoryId) return false;
+          if (filter.paymentId && t.paymentId !== filter.paymentId) return false;
           if (filter.q) {
             var hay = (t.note || '') + ' ' + st.cat(t.categoryId).name;
             if (hay.toLowerCase().indexOf(filter.q.toLowerCase()) < 0) return false;
@@ -399,8 +429,16 @@
       var c = st.cat(filter.categoryId);
       box.appendChild(u.el('button', {
         class: 'chip', type: 'button', 'aria-pressed': 'true',
-        text: c.emoji + ' ' + c.name + '  ✕',
+        text: c.emoji + ' ' + App.i18n.t(c.name) + '  ✕',
         onclick: function () { filter.categoryId = null; App.router.refresh(); }
+      }));
+    }
+    if (filter.paymentId) {
+      var p = st.pay(filter.paymentId);
+      box.appendChild(u.el('button', {
+        class: 'chip', type: 'button', 'aria-pressed': 'true',
+        text: p.emoji + ' ' + App.i18n.t(p.name) + '  ✕',
+        onclick: function () { filter.paymentId = null; App.router.refresh(); }
       }));
     }
     if (filter.q) {
@@ -432,8 +470,9 @@
     var catSel = u.el('select', { class: 'select', id: 'fcat' });
     catSel.appendChild(u.el('option', { value: '', text: '— Tất cả hạng mục —' }));
     st.cats().forEach(function (c) {
+      // Thẻ <option> không chứa được thẻ con nên phải dịch tên ngay tại đây
       catSel.appendChild(u.el('option', {
-        value: c.id, text: c.emoji + ' ' + c.name,
+        value: c.id, text: c.emoji + ' ' + App.i18n.t(c.name),
         selected: filter.categoryId === c.id
       }));
     });
@@ -442,13 +481,26 @@
       catSel
     ]));
 
+    var paySel = u.el('select', { class: 'select', id: 'fpay' });
+    paySel.appendChild(u.el('option', { value: '', text: '— Tất cả phương thức —' }));
+    st.pays().forEach(function (p) {
+      paySel.appendChild(u.el('option', {
+        value: p.id, text: p.emoji + ' ' + App.i18n.t(p.name),
+        selected: filter.paymentId === p.id
+      }));
+    });
+    body.appendChild(u.el('div', { class: 'field' }, [
+      u.el('label', { class: 'field__label', for: 'fpay', text: 'Thanh toán bằng' }),
+      paySel
+    ]));
+
     u.sheet({
       title: 'Lọc giao dịch',
       body: body,
       actions: [
         {
           label: 'Xóa lọc', onClick: function () {
-            filter = { type: 'all', categoryId: null, q: '' };
+            filter = { type: 'all', categoryId: null, paymentId: null, q: '' };
             App.router.refresh();
           }
         },
@@ -456,6 +508,7 @@
           label: 'Áp dụng', kind: 'primary', onClick: function () {
             filter.q = qInput.value.trim();
             filter.categoryId = catSel.value || null;
+            filter.paymentId = paySel.value || null;
             App.router.refresh();
           }
         }
@@ -465,7 +518,17 @@
 
   function txRow(t) {
     var c = st.cat(t.categoryId);
+    var p = st.pay(t.paymentId);
     var isInc = t.type === 'income';
+    // Mỗi mẩu chữ nằm trong một nút riêng để bộ dịch tra được từng phần;
+    // gộp thành một chuỗi thì cả câu sẽ không khớp từ điển nào.
+    var subParts = [];
+    if (p) {
+      subParts.push(u.el('span', { text: p.emoji + ' ' }));
+      subParts.push(u.el('span', { text: p.name }));
+      subParts.push(u.el('span', { text: ' · ' }));
+    }
+    subParts.push(u.el('span', { text: t.note || (isInc ? 'Khoản thu' : 'Khoản chi') }));
     return u.el('button', {
       class: 'row', type: 'button',
       onclick: function () { txEditor.open(t, { onSaved: App.router.refresh }); }
@@ -477,7 +540,7 @@
       }),
       u.el('span', { class: 'row__body' }, [
         u.el('span', { class: 'row__title', text: c.name }),
-        u.el('span', { class: 'row__sub', text: t.note || (isInc ? 'Khoản thu' : 'Khoản chi') })
+        u.el('span', { class: 'row__sub' }, subParts)
       ]),
       t.photo ? u.el('img', { class: 'row__thumb', src: t.photo, alt: 'Ảnh hóa đơn' }) : null,
       u.el('span', { class: 'row__end' }, [

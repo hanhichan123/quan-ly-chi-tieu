@@ -2,7 +2,7 @@
    main.js — Khởi động app, điều hướng, thanh công cụ.
    =========================================================== */
 
-App.VERSION = '1.0.0';
+App.VERSION = '1.1.0';
 
 (function () {
   'use strict';
@@ -212,6 +212,11 @@ App.VERSION = '1.0.0';
     if (!location.hash) location.replace('#/' + DEFAULT_ROUTE);
 
     st.load().then(function () {
+      // Đang bật khoá thì phải mở khoá xong mới vẽ dữ liệu ra màn hình,
+      // tránh việc số liệu loé lên trong tích tắc trước khi bị che.
+      return App.lock.gate();
+    }).then(function () {
+      App.lock.watchIdle();
       render();
       registerSW();
       return App.recurring.promptIfDue();

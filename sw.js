@@ -8,15 +8,17 @@
    - Không đụng gì tới dữ liệu người dùng (nằm trong IndexedDB).
    =========================================================== */
 
-var CACHE_VERSION = 'qlct-v1.0.1';
+var CACHE_VERSION = 'qlct-v1.1.0';
 
 var APP_SHELL = [
   './',
   './index.html',
+  './privacy.html',
   './manifest.webmanifest',
   './css/tokens.css',
   './css/app.css',
   './js/util.js',
+  './js/i18n.js',
   './js/dates.js',
   './js/money.js',
   './js/db.js',
@@ -28,6 +30,7 @@ var APP_SHELL = [
   './js/recurring.js',
   './js/goals.js',
   './js/backup.js',
+  './js/lock.js',
   './js/screens/home.js',
   './js/screens/transactions.js',
   './js/screens/tasks.js',

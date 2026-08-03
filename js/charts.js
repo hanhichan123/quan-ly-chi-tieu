@@ -85,7 +85,9 @@ App.charts = (function () {
           'stroke-dashoffset': -offset
         });
         arc.appendChild(svgEl('title', {}));
-        arc.lastChild.textContent = it.label + ': ' + M.format(it.value) +
+        // <title> là một chuỗi ghép nên bộ dịch DOM không tra được cả câu;
+        // dịch riêng phần tên trước khi ghép.
+        arc.lastChild.textContent = App.i18n.t(it.label) + ': ' + M.format(it.value) +
           ' (' + Math.round(it.value / total * 100) + '%)';
         g.appendChild(arc);
         offset += len;
@@ -113,7 +115,11 @@ App.charts = (function () {
     data.forEach(function (it) {
       box.appendChild(u.el('div', { class: 'legend__item' }, [
         u.el('span', { class: 'legend__dot', style: 'background:' + it.color }),
-        u.el('span', { class: 'legend__name', text: (it.emoji ? it.emoji + ' ' : '') + it.label }),
+        // Tên để riêng một nút văn bản để bộ dịch tra được
+        u.el('span', { class: 'legend__name' }, [
+          it.emoji ? u.el('span', { text: it.emoji + ' ' }) : null,
+          u.el('span', { text: it.label })
+        ]),
         u.el('span', { class: 'legend__val amt', text: M.format(it.value) }),
         u.el('span', { class: 'legend__pct', text: total ? Math.round(it.value / total * 100) + '%' : '0%' })
       ]));

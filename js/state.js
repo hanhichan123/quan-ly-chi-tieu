@@ -13,6 +13,8 @@ App.state = (function () {
     settings: {},
     categories: [],
     catById: {},
+    payments: [],
+    payById: {},
     budgets: {},           // { daily: 300000, weekly: ..., monthly: ..., 'cat:cho:monthly': ... }
     period: 'month',
     anchor: D.today(),
@@ -46,7 +48,8 @@ App.state = (function () {
         return Promise.all([
           App.db.getAll('settings'),
           App.db.getAll('categories'),
-          App.db.getAll('budgets')
+          App.db.getAll('budgets'),
+          App.db.getAll('paymentMethods')
         ]);
       })
       .then(function (res) {
@@ -65,6 +68,10 @@ App.state = (function () {
         S.budgets = {};
         (res[2] || []).forEach(function (b) { S.budgets[b.id] = b.amount; });
 
+        // Phương thức thanh toán
+        setPayments(res[3] || []);
+
+        App.i18n.init(S.settings.lang);
         App.money.setCurrency(S.settings.currency);
         applyTheme();
         S.loaded = true;
@@ -95,12 +102,52 @@ App.state = (function () {
     return 'var(--' + cat(id).color + ')';
   }
 
+  /* ---------------- Phương thức thanh toán ---------------- */
+
+  function setPayments(list) {
+    S.payments = list.slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+    S.payById = {};
+    S.payments.forEach(function (p) { S.payById[p.id] = p; });
+  }
+
+  /** Danh sách phương thức còn dùng (bỏ những cái đã ẩn) */
+  function pays() {
+    return S.payments.filter(function (p) { return !p.archived; });
+  }
+
+  /** Tra một phương thức; trả về null nếu giao dịch không ghi phương thức nào */
+  function pay(id) {
+    if (!id) return null;
+    return S.payById[id] || { id: id, name: 'Không rõ', emoji: '❓', color: 'c12' };
+  }
+
+  function savePayment(p) {
+    if (!p.id) p.id = 'p_' + u.uid();
+    return App.db.put('paymentMethods', p)
+      .then(function () { return App.db.getAll('paymentMethods'); })
+      .then(function (all) {
+        setPayments(all);
+        emit('data', { store: 'paymentMethods' });
+        return p;
+      });
+  }
+
+  function delPayment(id) {
+    return App.db.del('paymentMethods', id)
+      .then(function () { return App.db.getAll('paymentMethods'); })
+      .then(function (all) {
+        setPayments(all);
+        emit('data', { store: 'paymentMethods' });
+      });
+  }
+
   /* ---------------- Cài đặt ---------------- */
 
   function setSetting(key, value) {
     S.settings[key] = value;
     return App.db.put('settings', { key: key, value: value }).then(function () {
       if (key === 'currency') App.money.setCurrency(value);
+      if (key === 'lang') App.i18n.setLang(value);
       if (key === 'theme') applyTheme();
       emit('settings', { key: key, value: value });
       return value;
@@ -278,6 +325,8 @@ App.state = (function () {
     on: on, off: off, emit: emit,
     load: load, applyTheme: applyTheme,
     cats: cats, cat: cat, catColor: catColor, setCategories: setCategories,
+    pays: pays, pay: pay, setPayments: setPayments,
+    savePayment: savePayment, delPayment: delPayment,
     setSetting: setSetting,
     setPeriod: setPeriod, setAnchor: setAnchor, shiftPeriod: shiftPeriod,
     currentRange: currentRange, isCurrentPeriod: isCurrentPeriod,

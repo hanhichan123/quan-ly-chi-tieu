@@ -775,6 +775,105 @@ button { cursor: pointer; }
 .goal__name { font-weight: 700; font-size: 15px; }
 .goal__sub { font-size: 13px; color: var(--text-dim); font-family: var(--font-num); }
 
+/* --------------------- Màn hình khoá --------------------- */
+
+body.is-locked .app { filter: blur(14px); pointer-events: none; }
+
+.lockscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  padding: var(--s4);
+  padding-bottom: calc(var(--s4) + env(safe-area-inset-bottom, 0px));
+}
+
+.lockpad {
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.lockpad__logo {
+  width: 62px; height: 62px;
+  border-radius: 16px;
+  margin-bottom: var(--s3);
+}
+
+.lockpad__title { font-size: 18px; font-weight: 700; margin: 0 0 var(--s4); }
+
+.lockpad__dots {
+  display: flex;
+  justify-content: center;
+  gap: 13px;
+  margin-bottom: var(--s3);
+  min-height: 16px;
+}
+
+.lockdot {
+  width: 14px; height: 14px;
+  border-radius: var(--r-full);
+  border: 2px solid var(--border-strong);
+  background: transparent;
+  transition: background .12s, border-color .12s, transform .12s;
+}
+.lockdot.is-on {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.12);
+}
+
+.lockpad__msg {
+  min-height: 22px;
+  font-size: 13.5px;
+  color: var(--text-dim);
+  margin-bottom: var(--s3);
+  line-height: 1.35;
+}
+.lockpad__msg.is-bad { color: var(--danger); font-weight: 600; }
+
+.lockpad__keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s3);
+  justify-items: center;
+}
+
+.lockkey {
+  width: 72px; height: 72px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 26px;
+  font-weight: 500;
+  font-family: var(--font-num);
+  color: var(--text);
+  box-shadow: var(--shadow-1);
+}
+.lockkey:active { background: var(--surface-2); transform: scale(0.94); }
+.lockkey--alt {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  font-size: 22px;
+}
+
+.shake { animation: shake .38s; }
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+
+@media (max-height: 640px) {
+  .lockkey { width: 60px; height: 60px; font-size: 22px; }
+  .lockpad__logo { width: 46px; height: 46px; }
+  .lockpad__keys { gap: var(--s2); }
+}
+
 /* --------------------- Tiện ích --------------------- */
 
 .muted { color: var(--text-dim); }

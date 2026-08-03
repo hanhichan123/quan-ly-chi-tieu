@@ -11,19 +11,24 @@ App.money = (function () {
   'use strict';
 
   var LIST = [
-    { code: 'JPY', name: 'Yên Nhật',      symbol: '¥',  decimals: 0, locale: 'ja-JP' },
-    { code: 'VND', name: 'Đồng Việt Nam', symbol: '₫',  decimals: 0, locale: 'vi-VN' },
-    { code: 'USD', name: 'Đô la Mỹ',      symbol: '$',  decimals: 2, locale: 'en-US' },
-    { code: 'EUR', name: 'Euro',          symbol: '€',  decimals: 2, locale: 'de-DE' },
-    { code: 'KRW', name: 'Won Hàn Quốc',  symbol: '₩',  decimals: 0, locale: 'ko-KR' },
-    { code: 'CNY', name: 'Nhân dân tệ',   symbol: '¥',  decimals: 2, locale: 'zh-CN' },
-    { code: 'TWD', name: 'Đài tệ',        symbol: 'NT$', decimals: 0, locale: 'zh-TW' },
-    { code: 'THB', name: 'Baht Thái',     symbol: '฿',  decimals: 2, locale: 'th-TH' },
-    { code: 'GBP', name: 'Bảng Anh',      symbol: '£',  decimals: 2, locale: 'en-GB' },
-    { code: 'AUD', name: 'Đô la Úc',      symbol: 'A$', decimals: 2, locale: 'en-AU' },
-    { code: 'SGD', name: 'Đô la Singapore', symbol: 'S$', decimals: 2, locale: 'en-SG' },
-    { code: 'CAD', name: 'Đô la Canada',  symbol: 'C$', decimals: 2, locale: 'en-CA' }
+    { code: 'JPY', name: 'Yên Nhật',        nameEn: 'Japanese yen',      symbol: '¥',   decimals: 0 },
+    { code: 'VND', name: 'Đồng Việt Nam',   nameEn: 'Vietnamese dong',   symbol: '₫',   decimals: 0 },
+    { code: 'USD', name: 'Đô la Mỹ',        nameEn: 'US dollar',         symbol: '$',   decimals: 2 },
+    { code: 'EUR', name: 'Euro',            nameEn: 'Euro',              symbol: '€',   decimals: 2 },
+    { code: 'KRW', name: 'Won Hàn Quốc',    nameEn: 'Korean won',        symbol: '₩',   decimals: 0 },
+    { code: 'CNY', name: 'Nhân dân tệ',     nameEn: 'Chinese yuan',      symbol: '¥',   decimals: 2 },
+    { code: 'TWD', name: 'Đài tệ',          nameEn: 'Taiwan dollar',     symbol: 'NT$', decimals: 0 },
+    { code: 'THB', name: 'Baht Thái',       nameEn: 'Thai baht',         symbol: '฿',   decimals: 2 },
+    { code: 'GBP', name: 'Bảng Anh',        nameEn: 'British pound',     symbol: '£',   decimals: 2 },
+    { code: 'AUD', name: 'Đô la Úc',        nameEn: 'Australian dollar', symbol: 'A$',  decimals: 2 },
+    { code: 'SGD', name: 'Đô la Singapore', nameEn: 'Singapore dollar',  symbol: 'S$',  decimals: 2 },
+    { code: 'CAD', name: 'Đô la Canada',    nameEn: 'Canadian dollar',   symbol: 'C$',  decimals: 2 }
   ];
+
+  /** Tên tiền tệ theo ngôn ngữ đang chọn */
+  function nameOf(c) {
+    return (App.i18n && App.i18n.lang === 'en' && c.nameEn) ? c.nameEn : c.name;
+  }
 
   var BY_CODE = {};
   LIST.forEach(function (c) { BY_CODE[c.code] = c; });
@@ -34,18 +39,25 @@ App.money = (function () {
   // Nhờ vậy format(v, {code:'USD'}) vẫn đúng khi app đang để JPY.
   var nfCache = {};
 
+  function locale() {
+    return (App.i18n && App.i18n.numberLocale) ? App.i18n.numberLocale() : 'vi-VN';
+  }
+
   function formatterFor(decimals) {
-    if (nfCache[decimals]) return nfCache[decimals];
+    // Đệm theo cả locale: đổi ngôn ngữ thì dấu phân nhóm cũng đổi
+    // (1.500 kiểu Việt <-> 1,500 kiểu Anh).
+    var key = locale() + ':' + decimals;
+    if (nfCache[key]) return nfCache[key];
     var f;
     try {
-      f = new Intl.NumberFormat('vi-VN', {
+      f = new Intl.NumberFormat(locale(), {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals
       });
     } catch (e) {
       f = null;
     }
-    nfCache[decimals] = f;
+    nfCache[key] = f;
     return f;
   }
 
@@ -88,22 +100,23 @@ App.money = (function () {
     return out;
   }
 
-  /** Dạng rút gọn cho trục biểu đồ: 1.2Tr, 15N, 320 */
+  /** Dạng rút gọn cho trục biểu đồ: ¥1,2 Tr · ¥15N (tiếng Anh: ¥1.2M · ¥15K) */
   function compact(minor, opts) {
     opts = opts || {};
     var cur = opts.code ? get(opts.code) : current;
+    var en = !!(App.i18n && App.i18n.lang === 'en');
     var v = Math.abs(toMajor(minor, cur));
     var s;
-    if (v >= 1e9) s = trim(v / 1e9) + ' tỷ';
-    else if (v >= 1e6) s = trim(v / 1e6) + ' Tr';
-    else if (v >= 1e4) s = trim(v / 1e3) + 'N';
+    if (v >= 1e9) s = trim(v / 1e9, en) + (en ? 'B' : ' tỷ');
+    else if (v >= 1e6) s = trim(v / 1e6, en) + (en ? 'M' : ' Tr');
+    else if (v >= 1e4) s = trim(v / 1e3, en) + (en ? 'K' : 'N');
     else s = groupNumber(v, cur);
     return (opts.symbol === false ? '' : cur.symbol) + s;
   }
 
-  function trim(n) {
+  function trim(n, en) {
     var r = n >= 100 ? Math.round(n) : Math.round(n * 10) / 10;
-    return String(r).replace('.', ',');
+    return en ? String(r) : String(r).replace('.', ',');
   }
 
   /**
@@ -163,7 +176,7 @@ App.money = (function () {
   }
 
   return {
-    LIST: LIST, get: get, currency: currency, setCurrency: setCurrency,
+    LIST: LIST, get: get, currency: currency, setCurrency: setCurrency, nameOf: nameOf,
     format: format, compact: compact, parse: parse, toInput: toInput,
     toMajor: toMajor, toMinor: toMinor, convert: convert, groupNumber: groupNumber
   };

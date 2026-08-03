@@ -30,26 +30,64 @@ App.backup = (function () {
       });
   }
 
-  function exportJSON() {
+  function exportJSON(opts) {
+    opts = opts || {};
     return collect().then(function (payload) {
       var name = 'sao-luu-chi-tieu-' + D.today() + '.json';
       download(name, JSON.stringify(payload), 'application/json');
+      // Ghi mốc để tính lúc nào cần nhắc sao lưu lần sau.
+      // Bỏ qua khi đây là bản sao lưu tự động trước lúc quy đổi tiền tệ.
+      if (!opts.silent) return markBackedUp(payload).then(function () { return name; });
       return name;
     });
+  }
+
+  /** Ghi lại thời điểm và khối lượng dữ liệu của lần sao lưu gần nhất */
+  function markBackedUp(payload) {
+    var count = payload && payload.data && payload.data.transactions
+      ? payload.data.transactions.length
+      : 0;
+    return st.setSetting('lastBackupAt', new Date().toISOString())
+      .then(function () { return st.setSetting('lastBackupTxCount', count); });
+  }
+
+  /**
+   * Có nên nhắc sao lưu không?
+   * Trả về null nếu chưa cần, hoặc {reason, days, newCount, never}
+   */
+  function reminderStatus(totalTx) {
+    var s = st.S.settings;
+    var everyDays = s.backupReminderDays;
+    if (!everyDays) return null;                 // người dùng đã tắt nhắc
+    if (!totalTx) return null;                   // chưa có gì để mất
+
+    if (!s.lastBackupAt) {
+      return { never: true, newCount: totalTx, days: 0 };
+    }
+
+    var days = Math.floor((Date.now() - new Date(s.lastBackupAt).getTime()) / 86400000);
+    var newCount = Math.max(0, totalTx - (s.lastBackupTxCount || 0));
+    if (days >= everyDays && newCount > 0) {
+      return { never: false, days: days, newCount: newCount };
+    }
+    return null;
   }
 
   function exportCSV() {
     return App.db.getAll('transactions').then(function (list) {
       var cur = M.currency();
-      var head = ['Ngay', 'Loai', 'Hang muc', 'So tien (' + cur.code + ')', 'Ghi chu'];
+      var head = ['Ngay', 'Loai', 'Hang muc', 'So tien (' + cur.code + ')',
+                  'Phuong thuc', 'Ghi chu'];
       var rows = list
         .sort(function (a, b) { return a.date < b.date ? -1 : 1; })
         .map(function (t) {
+          var p = st.pay(t.paymentId);
           return [
             t.date,
             t.type === 'income' ? 'Thu' : 'Chi',
             st.cat(t.categoryId).name,
             String(M.toMajor(t.amount, cur)).replace('.', ','),
+            p ? p.name : '',
             t.note || ''
           ];
         });
@@ -216,6 +254,7 @@ App.backup = (function () {
   return {
     collect: collect, exportJSON: exportJSON, exportCSV: exportCSV,
     openImportDialog: openImportDialog, restore: restore,
-    wipeWithConfirm: wipeWithConfirm, summarize: summarize, validate: validate
+    wipeWithConfirm: wipeWithConfirm, summarize: summarize, validate: validate,
+    reminderStatus: reminderStatus, markBackedUp: markBackedUp
   };
 })();

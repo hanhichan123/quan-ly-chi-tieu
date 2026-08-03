@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chính sách bảo mật — Quản lý Chi tiêu</title>
+<meta name="description" content="Chính sách bảo mật của app Quản lý Chi tiêu: không thu thập, không truyền, không chia sẻ bất kỳ dữ liệu nào.">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="css/tokens.css">
+<style>
+  html, body { height: auto; overflow: auto; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 20px 72px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 8px; }
+  h1 { font-size: 26px; line-height: 1.25; margin: 0 0 6px; }
+  h2 { font-size: 19px; margin: 34px 0 10px; }
+  h3 { font-size: 16px; margin: 22px 0 6px; }
+  p, li { color: var(--text); margin: 0 0 12px; }
+  ul { padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .lede { color: var(--text-dim); font-size: 15px; margin: 0; }
+  .meta { color: var(--text-faint); font-size: 13.5px; margin-top: 10px; }
+  .box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--ok);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 20px 0;
+  }
+  .box--info { border-left-color: var(--primary); }
+  .box strong { display: block; margin-bottom: 4px; }
+  .box p:last-child { margin-bottom: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0 20px; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  .yes { color: var(--ok); font-weight: 700; }
+  .no { color: var(--danger); font-weight: 700; }
+  a { color: var(--primary); }
+  .langbar { display: flex; gap: 8px; margin-bottom: 22px; }
+  .langbar a {
+    text-decoration: none; font-weight: 600; font-size: 14px;
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--border-strong); color: var(--text-dim);
+  }
+  .langbar a.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .back { display: inline-block; margin-top: 32px; font-weight: 600; }
+  section[hidden] { display: none; }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="langbar">
+    <a href="#vi" id="lnkVi" class="on">Tiếng Việt</a>
+    <a href="#en" id="lnkEn">English</a>
+  </div>
+
+  <!-- ================= TIẾNG VIỆT ================= -->
+  <section id="sec-vi">
+    <header>
+      <h1>Chính sách bảo mật</h1>
+      <p class="lede">Ứng dụng <strong>Quản lý Chi tiêu &amp; Công việc</strong></p>
+      <p class="meta">Cập nhật lần cuối: 03/08/2026 · Phiên bản 1.1</p>
+    </header>
+
+    <div class="box">
+      <strong>Tóm tắt trong một câu</strong>
+      <p>Ứng dụng này <strong>không thu thập, không gửi đi và không chia sẻ</strong> bất kỳ dữ liệu nào của bạn. Mọi thứ bạn nhập vào đều nằm lại trong máy bạn.</p>
+    </div>
+
+    <h2>1. Chúng tôi thu thập những gì?</h2>
+    <p><strong>Không gì cả.</strong> Ứng dụng không có máy chủ, không có tài khoản đăng nhập, không có hệ thống phân tích hành vi, không có quảng cáo và không nhúng bất kỳ thư viện nào của bên thứ ba.</p>
+
+    <h2>2. Dữ liệu của bạn nằm ở đâu?</h2>
+    <p>Toàn bộ giao dịch, công việc, hạn mức, mục tiêu và ảnh hóa đơn được lưu trong <strong>bộ nhớ cục bộ của trình duyệt trên chính thiết bị bạn đang dùng</strong> (IndexedDB, hoặc localStorage nếu trình duyệt chặn IndexedDB).</p>
+    <p>Chúng tôi <strong>không</strong> có khả năng truy cập, đọc, sao chép hay khôi phục dữ liệu này — kể cả khi bạn yêu cầu, vì dữ liệu chưa bao giờ rời khỏi thiết bị của bạn.</p>
+
+    <h2>3. Ứng dụng có kết nối mạng không?</h2>
+    <table>
+      <tr><th>Hành vi</th><th>Có / Không</th></tr>
+      <tr><td>Gửi dữ liệu của bạn lên máy chủ</td><td class="no">Không bao giờ</td></tr>
+      <tr><td>Theo dõi, phân tích, đo lường hành vi</td><td class="no">Không</td></tr>
+      <tr><td>Quảng cáo hoặc mã theo dõi quảng cáo</td><td class="no">Không</td></tr>
+      <tr><td>Thư viện, phông chữ, CDN của bên thứ ba</td><td class="no">Không</td></tr>
+      <tr><td>Cookie theo dõi</td><td class="no">Không</td></tr>
+      <tr><td>Hoạt động hoàn toàn khi không có mạng</td><td class="yes">Có</td></tr>
+    </table>
+    <p>Lần đầu mở, thiết bị của bạn tải mã nguồn ứng dụng (HTML, CSS, JavaScript, biểu tượng) từ nơi lưu trữ web. Sau đó ứng dụng lưu lại và chạy hoàn toàn ngoại tuyến. Nhà cung cấp lưu trữ web có thể ghi nhận lượt truy cập theo cách thông thường như mọi trang web khác — điều này nằm ngoài tầm kiểm soát của ứng dụng và <strong>không liên quan tới dữ liệu chi tiêu của bạn</strong>.</p>
+
+    <h2>4. Các quyền ứng dụng có thể xin</h2>
+    <ul>
+      <li><strong>Máy ảnh / Thư viện ảnh</strong> — chỉ khi bạn tự bấm nút đính kèm ảnh hóa đơn. Ảnh được thu nhỏ và lưu ngay trong máy, không gửi đi đâu.</li>
+      <li><strong>Thông báo</strong> — tùy chọn, mặc định tắt. Chỉ dùng để nhắc bạn khi chi tiêu vượt hạn mức. Thông báo được tạo ngay trên máy, không qua máy chủ đẩy tin nào.</li>
+      <li><strong>Vân tay / khuôn mặt</strong> — tùy chọn, nếu bạn bật khóa ứng dụng. Hệ điều hành chỉ trả về kết quả đúng/sai; ứng dụng không nhận và không lưu dữ liệu sinh trắc học của bạn.</li>
+    </ul>
+    <p>Bạn có thể từ chối mọi quyền trên và ứng dụng vẫn dùng được đầy đủ các chức năng chính.</p>
+
+    <h2>5. Quyền của bạn với dữ liệu</h2>
+    <ul>
+      <li><strong>Xem</strong> — toàn bộ dữ liệu hiển thị ngay trong ứng dụng.</li>
+      <li><strong>Xuất</strong> — Cài đặt → Xuất file sao lưu (JSON hoặc CSV), lấy về toàn bộ dữ liệu.</li>
+      <li><strong>Xóa</strong> — Cài đặt → Xóa toàn bộ dữ liệu. Xóa hoặc gỡ ứng dụng cũng xóa sạch dữ liệu.</li>
+    </ul>
+
+    <div class="box box--info">
+      <strong>⚠️ Điều bạn cần tự lưu ý</strong>
+      <p>Vì không có máy chủ nào giữ bản sao, nếu bạn gỡ ứng dụng, đổi thiết bị, hoặc xóa dữ liệu duyệt web thì <strong>dữ liệu sẽ mất vĩnh viễn và không ai khôi phục được</strong>. Hãy dùng chức năng xuất file sao lưu định kỳ.</p>
+    </div>
+
+    <div class="box box--info">
+      <strong>Về tính năng khóa ứng dụng</strong>
+      <p>Mã PIN và vân tay là <strong>lớp che chắn trước ánh nhìn của người khác</strong>, giúp tránh việc người cầm máy bạn mở ra xem được ngay. Đây <strong>không phải mã hóa</strong>: người có hiểu biết kỹ thuật và có trong tay thiết bị đã mở khóa vẫn có thể đọc dữ liệu qua công cụ của trình duyệt. Nếu dữ liệu của bạn thật sự nhạy cảm, hãy đặt thêm khóa màn hình cho cả thiết bị.</p>
+    </div>
+
+    <h2>6. Trẻ em</h2>
+    <p>Ứng dụng không thu thập dữ liệu của bất kỳ ai, kể cả trẻ em, nên phù hợp với mọi lứa tuổi.</p>
+
+    <h2>7. Thay đổi chính sách</h2>
+    <p>Nếu chính sách này thay đổi, phiên bản mới sẽ được đăng ngay tại trang này kèm ngày cập nhật. Việc ứng dụng không có máy chủ là nguyên tắc thiết kế cốt lõi và sẽ không thay đổi mà không thông báo rõ ràng.</p>
+
+    <h2>8. Liên hệ</h2>
+    <p>Mọi câu hỏi về chính sách này, vui lòng gửi tới: <a href="mailto:bokaka.95@gmail.com">bokaka.95@gmail.com</a></p>
+    <p>Mã nguồn công khai, ai cũng có thể tự kiểm chứng những điều nêu trên: <a href="https://github.com/hanhichan123/quan-ly-chi-tieu" target="_blank" rel="noopener">github.com/hanhichan123/quan-ly-chi-tieu</a></p>
+
+    <a class="back" href="index.html">← Quay lại ứng dụng</a>
+  </section>
+
+  <!-- ================= ENGLISH ================= -->
+  <section id="sec-en" hidden>
+    <header>
+      <h1>Privacy Policy</h1>
+      <p class="lede"><strong>Expense &amp; Task Manager</strong> app</p>
+      <p class="meta">Last updated: 3 August 2026 · Version 1.1</p>
+    </header>
+
+    <div class="box">
+      <strong>One-sentence summary</strong>
+      <p>This app <strong>collects nothing, transmits nothing and shares nothing</strong>. Everything you enter stays on your own device.</p>
+    </div>
+
+    <h2>1. What data do we collect?</h2>
+    <p><strong>None.</strong> The app has no server, no user accounts, no analytics, no advertising, and embeds no third-party libraries whatsoever.</p>
+
+    <h2>2. Where is your data stored?</h2>
+    <p>All transactions, tasks, budget limits, savings goals and receipt photos are stored in <strong>your browser's local storage on the device you are using</strong> (IndexedDB, falling back to localStorage if IndexedDB is unavailable).</p>
+    <p>We <strong>cannot</strong> access, read, copy or restore this data — not even if you ask us to — because it never leaves your device.</p>
+
+    <h2>3. Does the app use the network?</h2>
+    <table>
+      <tr><th>Behaviour</th><th>Yes / No</th></tr>
+      <tr><td>Sends your data to a server</td><td class="no">Never</td></tr>
+      <tr><td>Tracking or analytics</td><td class="no">No</td></tr>
+      <tr><td>Advertising or ad trackers</td><td class="no">No</td></tr>
+      <tr><td>Third-party libraries, fonts or CDNs</td><td class="no">No</td></tr>
+      <tr><td>Tracking cookies</td><td class="no">No</td></tr>
+      <tr><td>Works fully offline</td><td class="yes">Yes</td></tr>
+    </table>
+    <p>On first launch your device downloads the app's own files (HTML, CSS, JavaScript, icons) from the web host. After that the app is cached and runs entirely offline. The web host may log page visits in the ordinary way that any website does — this is outside the app's control and is <strong>unrelated to your financial data</strong>.</p>
+
+    <h2>4. Permissions the app may request</h2>
+    <ul>
+      <li><strong>Camera / Photo library</strong> — only when you tap to attach a receipt photo. The image is resized and stored on your device; it is never uploaded.</li>
+      <li><strong>Notifications</strong> — optional, off by default. Used solely to alert you when spending exceeds a limit. Notifications are generated locally; no push server is involved.</li>
+      <li><strong>Fingerprint / face recognition</strong> — optional, only if you enable the app lock. The operating system returns a simple pass/fail result; the app never receives or stores your biometric data.</li>
+    </ul>
+    <p>You may decline every permission above and still use all core features.</p>
+
+    <h2>5. Your rights over your data</h2>
+    <ul>
+      <li><strong>Access</strong> — all data is visible inside the app.</li>
+      <li><strong>Export</strong> — Settings → Export backup (JSON or CSV) gives you everything.</li>
+      <li><strong>Delete</strong> — Settings → Erase all data. Uninstalling the app also removes it.</li>
+    </ul>
+
+    <div class="box box--info">
+      <strong>⚠️ Important for you to know</strong>
+      <p>Because no server holds a copy, uninstalling the app, switching devices or clearing your browser data will <strong>permanently destroy your data with no way to recover it</strong>. Please export a backup regularly.</p>
+    </div>
+
+    <div class="box box--info">
+      <strong>About the app lock</strong>
+      <p>The PIN and biometric lock are a <strong>shield against casual onlookers</strong> — they stop someone holding your phone from simply opening the app. They are <strong>not encryption</strong>: a technically capable person with your unlocked device can still read the data through browser developer tools. If your data is genuinely sensitive, please also set a device-level screen lock.</p>
+    </div>
+
+    <h2>6. Children</h2>
+    <p>The app collects no data from anyone, children included, and is therefore suitable for all ages.</p>
+
+    <h2>7. Changes to this policy</h2>
+    <p>Any change will be published on this page with an updated date. Having no server is a core design principle and will not change without a clear announcement.</p>
+
+    <h2>8. Contact</h2>
+    <p>Questions about this policy: <a href="mailto:bokaka.95@gmail.com">bokaka.95@gmail.com</a></p>
+    <p>The source code is public so anyone can verify the claims above: <a href="https://github.com/hanhichan123/quan-ly-chi-tieu" target="_blank" rel="noopener">github.com/hanhichan123/quan-ly-chi-tieu</a></p>
+
+    <a class="back" href="index.html">← Back to the app</a>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var secVi = document.getElementById('sec-vi');
+  var secEn = document.getElementById('sec-en');
+  var lnkVi = document.getElementById('lnkVi');
+  var lnkEn = document.getElementById('lnkEn');
+
+  function apply() {
+    var en = location.hash === '#en';
+    secVi.hidden = en;
+    secEn.hidden = !en;
+    lnkVi.className = en ? '' : 'on';
+    lnkEn.className = en ? 'on' : '';
+    document.documentElement.lang = en ? 'en' : 'vi';
+    document.title = en
+      ? 'Privacy Policy — Expense Manager'
+      : 'Chính sách bảo mật — Quản lý Chi tiêu';
+  }
+
+  window.addEventListener('hashchange', apply);
+
+  // Lần đầu vào: nếu app đang để tiếng Anh thì mở thẳng bản tiếng Anh
+  if (!location.hash) {
+    try {
+      if (localStorage.getItem('qlct:lang') === 'en') location.replace('#en');
+    } catch (e) { /* localStorage bị chặn thì bỏ qua */ }
+  }
+  apply();
+})();
+</script>
+</body>
+</html>

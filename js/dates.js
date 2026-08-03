@@ -7,9 +7,25 @@
 App.dates = (function () {
   'use strict';
 
-  var DOW_SHORT = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-  var DOW_LONG = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
-  var MONTH_SHORT = ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'];
+  /* Tên thứ và tháng theo từng ngôn ngữ.
+     Các chuỗi ngày tháng đều là chuỗi ghép động nên không nhờ bộ dịch DOM được,
+     phải xử lý ngay tại đây. */
+  var NAMES = {
+    vi: {
+      dowShort: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+      dowLong: ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'],
+      monthShort: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12']
+    },
+    en: {
+      dowShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      dowLong: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      monthShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    }
+  };
+
+  function L() { return (App.i18n && App.i18n.lang === 'en') ? NAMES.en : NAMES.vi; }
+  function isEn() { return !!(App.i18n && App.i18n.lang === 'en'); }
+  function pick(vi, en) { return isEn() ? en : vi; }
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
@@ -109,18 +125,23 @@ App.dates = (function () {
     var s = fromISO(start);
     if (period === 'day') {
       var isToday = start === today();
-      return (isToday ? 'Hôm nay, ' : '') + DOW_SHORT[s.getDay()] + ' ' + pad(s.getDate()) + '/' + pad(s.getMonth() + 1);
+      return (isToday ? pick('Hôm nay, ', 'Today, ') : '') +
+        L().dowShort[s.getDay()] + ' ' + pad(s.getDate()) + '/' + pad(s.getMonth() + 1);
     }
     if (period === 'week') {
       var e = fromISO(end);
       return pad(s.getDate()) + '/' + pad(s.getMonth() + 1) + ' – ' + pad(e.getDate()) + '/' + pad(e.getMonth() + 1);
     }
-    if (period === 'year') return 'Năm ' + s.getFullYear();
-    return 'Tháng ' + (s.getMonth() + 1) + '/' + s.getFullYear();
+    if (period === 'year') return pick('Năm ' + s.getFullYear(), s.getFullYear() + '');
+    return pick('Tháng ' + (s.getMonth() + 1) + '/' + s.getFullYear(),
+      L().monthShort[s.getMonth()] + ' ' + s.getFullYear());
   }
 
   function periodName(period) {
-    return period === 'day' ? 'ngày' : period === 'week' ? 'tuần' : period === 'year' ? 'năm' : 'tháng';
+    if (period === 'day') return pick('ngày', 'day');
+    if (period === 'week') return pick('tuần', 'week');
+    if (period === 'year') return pick('năm', 'year');
+    return pick('tháng', 'month');
   }
 
   /** '2026-08-01' -> '01/08/2026' */
@@ -135,19 +156,19 @@ App.dates = (function () {
     return pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
   }
 
-  /** Tiêu đề nhóm ngày: 'Hôm nay · T6 01/08' */
+  /** Tiêu đề nhóm ngày: 'Hôm nay · Thứ sáu, 01/08' */
   function fmtDayHeading(iso) {
     var d = fromISO(iso);
     var rel = relativeDay(iso);
-    var base = DOW_LONG[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+    var base = L().dowLong[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
     return rel ? rel + ' · ' + base : base;
   }
 
   function relativeDay(iso) {
     var t = today();
-    if (iso === t) return 'Hôm nay';
-    if (iso === addDays(t, -1)) return 'Hôm qua';
-    if (iso === addDays(t, 1)) return 'Ngày mai';
+    if (iso === t) return pick('Hôm nay', 'Today');
+    if (iso === addDays(t, -1)) return pick('Hôm qua', 'Yesterday');
+    if (iso === addDays(t, 1)) return pick('Ngày mai', 'Tomorrow');
     return '';
   }
 
@@ -155,11 +176,11 @@ App.dates = (function () {
   function dueText(iso) {
     if (!iso) return '';
     var diff = Math.round((fromISO(iso) - fromISO(today())) / 86400000);
-    if (diff === 0) return 'Hôm nay';
-    if (diff === 1) return 'Ngày mai';
-    if (diff === -1) return 'Quá hạn 1 ngày';
-    if (diff < 0) return 'Quá hạn ' + (-diff) + ' ngày';
-    if (diff <= 7) return 'Còn ' + diff + ' ngày';
+    if (diff === 0) return pick('Hôm nay', 'Today');
+    if (diff === 1) return pick('Ngày mai', 'Tomorrow');
+    if (diff === -1) return pick('Quá hạn 1 ngày', '1 day overdue');
+    if (diff < 0) return pick('Quá hạn ' + (-diff) + ' ngày', (-diff) + ' days overdue');
+    if (diff <= 7) return pick('Còn ' + diff + ' ngày', diff + ' days left');
     return fmtShort(iso);
   }
 
@@ -167,10 +188,10 @@ App.dates = (function () {
 
   function monthShort(iso) {
     var d = fromISO(iso);
-    return MONTH_SHORT[d.getMonth()];
+    return L().monthShort[d.getMonth()];
   }
 
-  function dowShort(iso) { return DOW_SHORT[fromISO(iso).getDay()]; }
+  function dowShort(iso) { return L().dowShort[fromISO(iso).getDay()]; }
 
   /** Số ngày còn lại của kỳ tính từ hôm nay (tối thiểu 1) */
   function daysLeftIn(r) {
@@ -191,6 +212,8 @@ App.dates = (function () {
     fmt: fmt, fmtShort: fmtShort, fmtDayHeading: fmtDayHeading,
     relativeDay: relativeDay, dueText: dueText, isOverdue: isOverdue,
     monthShort: monthShort, dowShort: dowShort, daysLeftIn: daysLeftIn,
-    DOW_SHORT: DOW_SHORT, DOW_LONG: DOW_LONG
+    // Đọc theo ngôn ngữ đang chọn tại thời điểm truy cập
+    get DOW_SHORT() { return L().dowShort; },
+    get DOW_LONG() { return L().dowLong; }
   };
 })();

@@ -14,8 +14,11 @@ App.db = (function () {
   'use strict';
 
   var DB_NAME = 'qlct';
-  var DB_VERSION = 1;
-  var STORES = ['transactions', 'categories', 'budgets', 'tasks', 'recurring', 'goals', 'settings'];
+  // v2: thêm kho 'paymentMethods' (phương thức thanh toán).
+  // Tăng số này mỗi khi thêm/đổi cấu trúc kho dữ liệu.
+  var DB_VERSION = 2;
+  var STORES = ['transactions', 'categories', 'budgets', 'tasks', 'recurring',
+                'goals', 'paymentMethods', 'settings'];
 
   var backend = null;      // 'idb' | 'ls'
   var idb = null;
@@ -53,6 +56,7 @@ App.db = (function () {
         }
         if (!db.objectStoreNames.contains('recurring')) db.createObjectStore('recurring', { keyPath: 'id' });
         if (!db.objectStoreNames.contains('goals')) db.createObjectStore('goals', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('paymentMethods')) db.createObjectStore('paymentMethods', { keyPath: 'id' });
         if (!db.objectStoreNames.contains('settings')) db.createObjectStore('settings', { keyPath: 'key' });
       };
       req.onsuccess = function () {

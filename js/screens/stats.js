@@ -43,6 +43,7 @@
           ]));
         } else {
           root.appendChild(donutCard(cur, r));
+          root.appendChild(paymentCard(cur));
           root.appendChild(barsCard(cur, all, r));
         }
 
@@ -84,18 +85,28 @@
     var avgPerDay = r.days > 0 ? Math.round(now / r.days) : 0;
     var card = u.el('div', { class: 'card' });
 
+    var heading = App.i18n.pick(
+      (viewType === 'income' ? 'Tổng thu ' : 'Tổng chi ') + r.label,
+      (viewType === 'income' ? 'Income · ' : 'Spent · ') + r.label
+    );
     card.appendChild(u.el('div', {}, [
-      u.el('div', { class: 'small muted', text: (viewType === 'income' ? 'Tổng thu ' : 'Tổng chi ') + r.label }),
+      u.el('div', { class: 'small muted', text: heading }),
       u.el('div', { class: 'amt amt--big', text: M.format(now) })
     ]));
 
     var better = viewType === 'income' ? diff >= 0 : diff <= 0;
     var arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '=';
+    var change = diff === 0
+      ? App.i18n.pick('Không đổi', 'No change')
+      : M.format(Math.abs(diff)) + ' (' + Math.abs(pctChange) + '%)';
+    var compareText = App.i18n.pick(
+      arrow + ' ' + change + ' so với ' + D.periodName(r.period) + ' trước (' + M.format(was) + ')',
+      arrow + ' ' + change + ' vs last ' + D.periodName(r.period) + ' (' + M.format(was) + ')'
+    );
     card.appendChild(u.el('div', {
       class: 'small mt2',
       style: 'font-weight:600;color:' + (diff === 0 ? 'var(--text-dim)' : better ? 'var(--ok)' : 'var(--danger)'),
-      text: arrow + ' ' + (diff === 0 ? 'Không đổi' : M.format(Math.abs(diff)) + ' (' + Math.abs(pctChange) + '%)') +
-        ' so với ' + D.periodName(r.period) + ' trước (' + M.format(was) + ')'
+      text: compareText
     }));
 
     card.appendChild(u.el('div', { class: 'stats-grid mt3' }, [
@@ -136,6 +147,45 @@
 
     // Bấm vào hạng mục -> mở tab Chi tiêu đã lọc sẵn
     card.appendChild(u.el('div', { class: 'field__hint center mt3', text: 'Chạm vào lát màu để xem số chi tiết.' }));
+    return card;
+  }
+
+  /* ---------------- Theo phương thức thanh toán ---------------- */
+
+  function paymentCard(cur) {
+    var map = {};
+    cur.forEach(function (t) {
+      if (t.type !== viewType) return;
+      var key = t.paymentId || '__none';
+      map[key] = (map[key] || 0) + t.amount;
+    });
+
+    var ids = Object.keys(map);
+    if (!ids.length) return u.el('span');
+
+    var items = ids.map(function (id) {
+      var p = id === '__none' ? null : st.pay(id);
+      return {
+        label: p ? p.name : 'Không ghi phương thức',
+        value: map[id],
+        color: 'var(--' + (p ? p.color : 'c12') + ')',
+        emoji: p ? p.emoji : '❔'
+      };
+    }).sort(function (a, b) { return b.value - a.value; });
+
+    var card = u.el('div', { class: 'card' });
+    card.appendChild(u.el('div', { class: 'card__head' }, [
+      u.el('h2', { class: 'card__title', text: 'Theo phương thức thanh toán' })
+    ]));
+
+    // Chỉ 1 phương thức thì vẽ donut là thừa, hiện chú giải cho gọn
+    if (items.length > 1) {
+      card.appendChild(C.donut(items, {
+        centerLabel: viewType === 'income' ? 'Tổng thu' : 'Tổng chi',
+        ariaLabel: 'Tỉ trọng theo phương thức thanh toán'
+      }));
+    }
+    card.appendChild(C.legend(items));
     return card;
   }
 

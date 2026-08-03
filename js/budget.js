@@ -186,7 +186,7 @@ App.budget = (function () {
       var spent = u.sum(monthList.filter(function (t) {
         return t.type === 'expense' && t.categoryId === c.id;
       }), function (t) { return t.amount; });
-      out.push(stat(c.emoji + ' ' + c.name, 'cat:' + c.id, spent, limit, null));
+      out.push(stat(c.emoji + ' ' + App.i18n.t(c.name), 'cat:' + c.id, spent, limit, null));
     });
     return out.sort(function (a, b) { return b.pct - a.pct; });
   }

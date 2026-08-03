@@ -277,7 +277,7 @@ App.recurring = (function () {
       u.clear(catSel);
       st.cats(m.type).forEach(function (c) {
         catSel.appendChild(u.el('option', {
-          value: c.id, text: c.emoji + ' ' + c.name, selected: m.categoryId === c.id
+          value: c.id, text: c.emoji + ' ' + App.i18n.t(c.name), selected: m.categoryId === c.id
         }));
       });
     }

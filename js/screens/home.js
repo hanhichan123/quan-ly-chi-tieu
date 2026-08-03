@@ -17,12 +17,16 @@
     showPeriod: false,
 
     render: function (root) {
-      Promise.all([B.overview(), st.allTasks(), st.allGoals()])
+      Promise.all([B.overview(), st.allTasks(), st.allGoals(), st.allTx()])
         .then(function (res) {
-          var ov = res[0], tasks = res[1], goals = res[2];
+          var ov = res[0], tasks = res[1], goals = res[2], allTx = res[3];
           u.clear(root);
 
           root.appendChild(alertsBlock(ov));
+
+          var backupNag = backupReminder(allTx.length);
+          if (backupNag) root.appendChild(backupNag);
+
           root.appendChild(balanceCard(ov));
           root.appendChild(limitsCard(ov));
 
@@ -83,6 +87,51 @@
     return box;
   }
 
+  /* ---------------- Nhắc sao lưu ---------------- */
+
+  function backupReminder(totalTx) {
+    var s = App.backup.reminderStatus(totalTx);
+    if (!s) return null;
+
+    var msg = s.never
+      ? 'Bạn có ' + totalTx + ' giao dịch nhưng chưa sao lưu lần nào. ' +
+        'Dữ liệu chỉ nằm trong máy — gỡ app hoặc đổi điện thoại là mất sạch.'
+      : 'Đã ' + s.days + ' ngày chưa sao lưu, trong đó có ' + s.newCount + ' giao dịch mới chưa được lưu ra file.';
+
+    return u.el('div', { class: 'alert alert--warn', role: 'status' }, [
+      u.el('span', { class: 'ico', text: '💾' }),
+      u.el('div', { class: 'alert__body' }, [
+        u.el('div', { class: 'alert__title', text: 'Nên sao lưu dữ liệu' }),
+        u.el('div', { text: msg }),
+        u.el('div', { class: 'btn-row mt3' }, [
+          u.el('button', {
+            class: 'btn btn--sm btn--primary', type: 'button', text: 'Sao lưu ngay',
+            onclick: function () {
+              App.backup.exportJSON().then(function (n) {
+                u.toast('Đã tải về ' + n, 'ok');
+                App.router.refresh();
+              });
+            }
+          }),
+          u.el('button', {
+            class: 'btn btn--sm', type: 'button', text: 'Để sau',
+            onclick: function () {
+              // Lùi lịch nhắc 3 ngày, không đụng tới mốc sao lưu thật
+              var d = new Date();
+              d.setDate(d.getDate() - Math.max(0, (st.S.settings.backupReminderDays || 14) - 3));
+              st.setSetting('lastBackupAt', d.toISOString())
+                .then(function () { return st.setSetting('lastBackupTxCount', 0); })
+                .then(function () {
+                  u.toast('Sẽ nhắc lại sau 3 ngày');
+                  App.router.refresh();
+                });
+            }
+          })
+        ])
+      ])
+    ]);
+  }
+
   /* ---------------- Số dư tháng ---------------- */
 
   function balanceCard(ov) {
@@ -91,7 +140,13 @@
 
     card.appendChild(u.el('div', { class: 'spread', style: 'align-items:flex-start' }, [
       u.el('div', {}, [
-        u.el('div', { class: 'small muted', text: 'Số dư tháng ' + (D.fromISO(D.today()).getMonth() + 1) }),
+        u.el('div', {
+          class: 'small muted',
+          text: App.i18n.pick(
+            'Số dư tháng ' + (D.fromISO(D.today()).getMonth() + 1),
+            'Balance · ' + D.monthShort(D.today())
+          )
+        }),
         u.el('div', {
           class: 'amt amt--big' + (bal < 0 ? ' amt--neg' : ''),
           text: (bal < 0 ? '−' : '') + M.format(Math.abs(bal))
@@ -164,7 +219,7 @@
       var c = st.cat(p.categoryId);
       box.appendChild(u.el('button', {
         class: 'chip', type: 'button',
-        text: c.emoji + ' ' + c.name + ' · ' + M.format(p.amount),
+        text: c.emoji + ' ' + App.i18n.t(c.name) + ' · ' + M.format(p.amount),
         onclick: function () { quickSave(p); }
       }));
     });
