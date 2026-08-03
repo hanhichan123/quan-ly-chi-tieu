@@ -8,7 +8,7 @@
    - Không đụng gì tới dữ liệu người dùng (nằm trong IndexedDB).
    =========================================================== */
 
-var CACHE_VERSION = 'qlct-v1.1.0';
+var CACHE_VERSION = 'qlct-v1.2.0';
 
 var APP_SHELL = [
   './',

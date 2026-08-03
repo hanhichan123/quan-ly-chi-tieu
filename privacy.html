@@ -63,6 +63,7 @@
   <div class="langbar">
     <a href="#vi" id="lnkVi" class="on">Tiếng Việt</a>
     <a href="#en" id="lnkEn">English</a>
+    <a href="#ja" id="lnkJa">日本語</a>
   </div>
 
   <!-- ================= TIẾNG VIỆT ================= -->
@@ -205,33 +206,111 @@
     <a class="back" href="index.html">← Back to the app</a>
   </section>
 
+  <!-- ================= 日本語 ================= -->
+  <section id="sec-ja" hidden>
+    <header>
+      <h1>プライバシーポリシー</h1>
+      <p class="lede"><strong>家計簿・タスク管理アプリ</strong></p>
+      <p class="meta">最終更新：2026年8月3日 · バージョン 1.2</p>
+    </header>
+
+    <div class="box">
+      <strong>ひとことで言うと</strong>
+      <p>このアプリは<strong>何も収集せず、何も送信せず、何も共有しません</strong>。入力した内容はすべてお使いの端末の中だけに残ります。</p>
+    </div>
+
+    <h2>1. どんなデータを集めますか？</h2>
+    <p><strong>何も集めません。</strong>サーバーもアカウント登録もなく、行動分析も広告もありません。第三者のライブラリは一切組み込んでいません。</p>
+
+    <h2>2. データはどこに保存されますか？</h2>
+    <p>取引・タスク・上限・目標・レシート写真はすべて、<strong>お使いの端末のブラウザ内の保存領域</strong>（IndexedDB、使えない場合は localStorage）に保存されます。</p>
+    <p>開発者がこのデータに<strong>アクセスすることはできません</strong>。ご依頼をいただいても閲覧・複製・復元はできません。データが端末の外に出たことがないからです。</p>
+
+    <h2>3. ネットワークは使いますか？</h2>
+    <table>
+      <tr><th>動作</th><th>あり / なし</th></tr>
+      <tr><td>データをサーバーへ送信する</td><td class="no">一切なし</td></tr>
+      <tr><td>行動の追跡・分析</td><td class="no">なし</td></tr>
+      <tr><td>広告や広告用トラッカー</td><td class="no">なし</td></tr>
+      <tr><td>外部のライブラリ・フォント・CDN</td><td class="no">なし</td></tr>
+      <tr><td>追跡用クッキー</td><td class="no">なし</td></tr>
+      <tr><td>オフラインでも完全に動作する</td><td class="yes">あり</td></tr>
+    </table>
+    <p>初回起動時のみ、アプリ本体のファイル（HTML・CSS・JavaScript・アイコン）をウェブサーバーから読み込みます。その後は端末内に保存され、完全にオフラインで動作します。ホスティング事業者が一般的なウェブサイトと同様にアクセス記録を残す可能性はありますが、これはアプリの管理外であり、<strong>あなたの家計データとは無関係です</strong>。</p>
+
+    <h2>4. アプリが求める可能性のある権限</h2>
+    <ul>
+      <li><strong>カメラ・写真</strong> — レシート写真を添付するボタンを押したときだけです。画像は縮小して端末内に保存され、送信されることはありません。</li>
+      <li><strong>通知</strong> — 任意で、初期状態はオフです。支出が上限を超えたときのお知らせにのみ使います。通知は端末内で生成され、プッシュ通知サーバーは介しません。</li>
+      <li><strong>指紋・顔認証</strong> — 任意で、アプリロックを有効にした場合のみです。OSからは成功か失敗かの結果しか返らず、生体情報そのものをアプリが受け取ったり保存したりすることはありません。</li>
+    </ul>
+    <p>上記の権限をすべて拒否しても、主要な機能はそのまま使えます。</p>
+
+    <h2>5. データに対するあなたの権利</h2>
+    <ul>
+      <li><strong>閲覧</strong> — すべてのデータはアプリ内で確認できます。</li>
+      <li><strong>書き出し</strong> — 設定 → バックアップを書き出す（JSON または CSV）で全データを取得できます。</li>
+      <li><strong>削除</strong> — 設定 → すべてのデータを消す。アプリを削除しても消えます。</li>
+    </ul>
+
+    <div class="box box--info">
+      <strong>⚠️ ご注意ください</strong>
+      <p>控えを持つサーバーが存在しないため、アプリを削除したり、端末を買い替えたり、ブラウザのデータを消去すると<strong>データは完全に失われ、誰にも復元できません</strong>。定期的にバックアップを書き出してください。</p>
+    </div>
+
+    <div class="box box--info">
+      <strong>アプリロックについて</strong>
+      <p>PINと生体認証は<strong>他人の目から隠すための仕組み</strong>であり、端末を手にした人がすぐ中身を見られないようにするものです。<strong>暗号化ではありません</strong>。技術的な知識のある人が、ロック解除済みの端末を手にした場合、ブラウザの開発者ツールからデータを読むことは可能です。本当に機微な情報を扱う場合は、端末自体にも画面ロックを設定してください。</p>
+    </div>
+
+    <h2>6. お子様について</h2>
+    <p>本アプリは誰からもデータを収集しないため、お子様を含むすべての年齢の方に適しています。</p>
+
+    <h2>7. ポリシーの変更</h2>
+    <p>変更があった場合は、更新日とともにこのページに掲載します。サーバーを持たないことは設計上の中核的な方針であり、明確な告知なしに変更することはありません。</p>
+
+    <h2>8. お問い合わせ</h2>
+    <p>本ポリシーに関するご質問：<a href="mailto:bokaka.95@gmail.com">bokaka.95@gmail.com</a></p>
+    <p>ソースコードは公開されており、上記の内容は誰でも検証できます：<a href="https://github.com/hanhichan123/quan-ly-chi-tieu" target="_blank" rel="noopener">github.com/hanhichan123/quan-ly-chi-tieu</a></p>
+
+    <a class="back" href="index.html">← アプリに戻る</a>
+  </section>
+
 </div>
 
 <script>
 (function () {
-  var secVi = document.getElementById('sec-vi');
-  var secEn = document.getElementById('sec-en');
-  var lnkVi = document.getElementById('lnkVi');
-  var lnkEn = document.getElementById('lnkEn');
+  var LANGS = ['vi', 'en', 'ja'];
+  var TITLES = {
+    vi: 'Chính sách bảo mật — Quản lý Chi tiêu',
+    en: 'Privacy Policy — Expense Manager',
+    ja: 'プライバシーポリシー — 家計簿'
+  };
+
+  function current() {
+    var h = (location.hash || '').replace('#', '');
+    return LANGS.indexOf(h) >= 0 ? h : 'vi';
+  }
 
   function apply() {
-    var en = location.hash === '#en';
-    secVi.hidden = en;
-    secEn.hidden = !en;
-    lnkVi.className = en ? '' : 'on';
-    lnkEn.className = en ? 'on' : '';
-    document.documentElement.lang = en ? 'en' : 'vi';
-    document.title = en
-      ? 'Privacy Policy — Expense Manager'
-      : 'Chính sách bảo mật — Quản lý Chi tiêu';
+    var cur = current();
+    LANGS.forEach(function (l) {
+      var sec = document.getElementById('sec-' + l);
+      var lnk = document.getElementById('lnk' + l.charAt(0).toUpperCase() + l.slice(1));
+      if (sec) sec.hidden = (l !== cur);
+      if (lnk) lnk.className = (l === cur) ? 'on' : '';
+    });
+    document.documentElement.lang = cur;
+    document.title = TITLES[cur];
   }
 
   window.addEventListener('hashchange', apply);
 
-  // Lần đầu vào: nếu app đang để tiếng Anh thì mở thẳng bản tiếng Anh
+  // Lần đầu vào: mở đúng thứ tiếng mà app đang dùng
   if (!location.hash) {
     try {
-      if (localStorage.getItem('qlct:lang') === 'en') location.replace('#en');
+      var saved = localStorage.getItem('qlct:lang');
+      if (saved && saved !== 'vi' && LANGS.indexOf(saved) >= 0) location.replace('#' + saved);
     } catch (e) { /* localStorage bị chặn thì bỏ qua */ }
   }
   apply();

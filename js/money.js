@@ -11,23 +11,26 @@ App.money = (function () {
   'use strict';
 
   var LIST = [
-    { code: 'JPY', name: 'Yên Nhật',        nameEn: 'Japanese yen',      symbol: '¥',   decimals: 0 },
-    { code: 'VND', name: 'Đồng Việt Nam',   nameEn: 'Vietnamese dong',   symbol: '₫',   decimals: 0 },
-    { code: 'USD', name: 'Đô la Mỹ',        nameEn: 'US dollar',         symbol: '$',   decimals: 2 },
-    { code: 'EUR', name: 'Euro',            nameEn: 'Euro',              symbol: '€',   decimals: 2 },
-    { code: 'KRW', name: 'Won Hàn Quốc',    nameEn: 'Korean won',        symbol: '₩',   decimals: 0 },
-    { code: 'CNY', name: 'Nhân dân tệ',     nameEn: 'Chinese yuan',      symbol: '¥',   decimals: 2 },
-    { code: 'TWD', name: 'Đài tệ',          nameEn: 'Taiwan dollar',     symbol: 'NT$', decimals: 0 },
-    { code: 'THB', name: 'Baht Thái',       nameEn: 'Thai baht',         symbol: '฿',   decimals: 2 },
-    { code: 'GBP', name: 'Bảng Anh',        nameEn: 'British pound',     symbol: '£',   decimals: 2 },
-    { code: 'AUD', name: 'Đô la Úc',        nameEn: 'Australian dollar', symbol: 'A$',  decimals: 2 },
-    { code: 'SGD', name: 'Đô la Singapore', nameEn: 'Singapore dollar',  symbol: 'S$',  decimals: 2 },
-    { code: 'CAD', name: 'Đô la Canada',    nameEn: 'Canadian dollar',   symbol: 'C$',  decimals: 2 }
+    { code: 'JPY', name: 'Yên Nhật',        nameEn: 'Japanese yen',      nameJa: '日本円',          symbol: '¥',   decimals: 0 },
+    { code: 'VND', name: 'Đồng Việt Nam',   nameEn: 'Vietnamese dong',   nameJa: 'ベトナムドン',    symbol: '₫',   decimals: 0 },
+    { code: 'USD', name: 'Đô la Mỹ',        nameEn: 'US dollar',         nameJa: '米ドル',          symbol: '$',   decimals: 2 },
+    { code: 'EUR', name: 'Euro',            nameEn: 'Euro',              nameJa: 'ユーロ',          symbol: '€',   decimals: 2 },
+    { code: 'KRW', name: 'Won Hàn Quốc',    nameEn: 'Korean won',        nameJa: '韓国ウォン',      symbol: '₩',   decimals: 0 },
+    { code: 'CNY', name: 'Nhân dân tệ',     nameEn: 'Chinese yuan',      nameJa: '中国元',          symbol: '¥',   decimals: 2 },
+    { code: 'TWD', name: 'Đài tệ',          nameEn: 'Taiwan dollar',     nameJa: '台湾ドル',        symbol: 'NT$', decimals: 0 },
+    { code: 'THB', name: 'Baht Thái',       nameEn: 'Thai baht',         nameJa: 'タイバーツ',      symbol: '฿',   decimals: 2 },
+    { code: 'GBP', name: 'Bảng Anh',        nameEn: 'British pound',     nameJa: '英ポンド',        symbol: '£',   decimals: 2 },
+    { code: 'AUD', name: 'Đô la Úc',        nameEn: 'Australian dollar', nameJa: '豪ドル',          symbol: 'A$',  decimals: 2 },
+    { code: 'SGD', name: 'Đô la Singapore', nameEn: 'Singapore dollar',  nameJa: 'シンガポールドル', symbol: 'S$',  decimals: 2 },
+    { code: 'CAD', name: 'Đô la Canada',    nameEn: 'Canadian dollar',   nameJa: 'カナダドル',      symbol: 'C$',  decimals: 2 }
   ];
 
   /** Tên tiền tệ theo ngôn ngữ đang chọn */
   function nameOf(c) {
-    return (App.i18n && App.i18n.lang === 'en' && c.nameEn) ? c.nameEn : c.name;
+    var l = (App.i18n && App.i18n.lang) || 'vi';
+    if (l === 'ja' && c.nameJa) return c.nameJa;
+    if (l === 'en' && c.nameEn) return c.nameEn;
+    return c.name;
   }
 
   var BY_CODE = {};
@@ -100,23 +103,39 @@ App.money = (function () {
     return out;
   }
 
-  /** Dạng rút gọn cho trục biểu đồ: ¥1,2 Tr · ¥15N (tiếng Anh: ¥1.2M · ¥15K) */
+  /**
+   * Dạng rút gọn cho trục biểu đồ.
+   * Việt: ¥1,2 Tr · ¥15N — Anh: ¥1.2M · ¥15K
+   * Nhật: đếm theo 万 (10.000) và 億 (100.000.000) đúng thói quen bản xứ,
+   *       nên ¥66.700 thành ¥6.7万 chứ không phải ¥66.7K.
+   */
   function compact(minor, opts) {
     opts = opts || {};
     var cur = opts.code ? get(opts.code) : current;
-    var en = !!(App.i18n && App.i18n.lang === 'en');
+    var l = (App.i18n && App.i18n.lang) || 'vi';
     var v = Math.abs(toMajor(minor, cur));
+    var sym = (opts.symbol === false ? '' : cur.symbol);
     var s;
-    if (v >= 1e9) s = trim(v / 1e9, en) + (en ? 'B' : ' tỷ');
-    else if (v >= 1e6) s = trim(v / 1e6, en) + (en ? 'M' : ' Tr');
-    else if (v >= 1e4) s = trim(v / 1e3, en) + (en ? 'K' : 'N');
+
+    if (l === 'ja') {
+      if (v >= 1e8) s = trim(v / 1e8, l) + '億';
+      else if (v >= 1e4) s = trim(v / 1e4, l) + '万';
+      else s = groupNumber(v, cur);
+      return sym + s;
+    }
+
+    var en = l === 'en';
+    if (v >= 1e9) s = trim(v / 1e9, l) + (en ? 'B' : ' tỷ');
+    else if (v >= 1e6) s = trim(v / 1e6, l) + (en ? 'M' : ' Tr');
+    else if (v >= 1e4) s = trim(v / 1e3, l) + (en ? 'K' : 'N');
     else s = groupNumber(v, cur);
-    return (opts.symbol === false ? '' : cur.symbol) + s;
+    return sym + s;
   }
 
-  function trim(n, en) {
+  function trim(n, lang) {
     var r = n >= 100 ? Math.round(n) : Math.round(n * 10) / 10;
-    return en ? String(r) : String(r).replace('.', ',');
+    // Chỉ tiếng Việt dùng dấu phẩy làm dấu thập phân
+    return lang === 'vi' ? String(r).replace('.', ',') : String(r);
   }
 
   /**

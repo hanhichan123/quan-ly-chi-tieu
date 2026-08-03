@@ -87,7 +87,8 @@
 
     var heading = App.i18n.pick(
       (viewType === 'income' ? 'Tổng thu ' : 'Tổng chi ') + r.label,
-      (viewType === 'income' ? 'Income · ' : 'Spent · ') + r.label
+      (viewType === 'income' ? 'Income · ' : 'Spent · ') + r.label,
+      r.label + (viewType === 'income' ? ' の収入合計' : ' の支出合計')
     );
     card.appendChild(u.el('div', {}, [
       u.el('div', { class: 'small muted', text: heading }),
@@ -97,11 +98,12 @@
     var better = viewType === 'income' ? diff >= 0 : diff <= 0;
     var arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '=';
     var change = diff === 0
-      ? App.i18n.pick('Không đổi', 'No change')
+      ? App.i18n.pick('Không đổi', 'No change', '変化なし')
       : M.format(Math.abs(diff)) + ' (' + Math.abs(pctChange) + '%)';
     var compareText = App.i18n.pick(
       arrow + ' ' + change + ' so với ' + D.periodName(r.period) + ' trước (' + M.format(was) + ')',
-      arrow + ' ' + change + ' vs last ' + D.periodName(r.period) + ' (' + M.format(was) + ')'
+      arrow + ' ' + change + ' vs last ' + D.periodName(r.period) + ' (' + M.format(was) + ')',
+      arrow + ' 前' + D.periodName(r.period) + '（' + M.format(was) + '）と比べて ' + change
     );
     card.appendChild(u.el('div', {
       class: 'small mt2',

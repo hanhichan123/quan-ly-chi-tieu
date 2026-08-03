@@ -53,7 +53,11 @@
     if (t.priority) meta.appendChild(u.el('span', { class: 'pri ' + pri.cls, text: pri.label }));
     if (t.repeat && t.repeat !== 'none') {
       var rp = REPEATS.filter(function (r) { return r.v === t.repeat; })[0];
-      meta.appendChild(u.el('span', { text: '🔁 ' + (rp ? rp.label.toLowerCase() : '') }));
+      // Nhãn để riêng một nút văn bản để bộ dịch tra được từ điển
+      meta.appendChild(u.el('span', {}, [
+        u.el('span', { text: '🔁 ' }),
+        u.el('span', { text: rp ? rp.label.toLowerCase() : '' })
+      ]));
     }
     if (t.note) meta.appendChild(u.el('span', { text: '📝 ' + t.note }));
 
@@ -288,7 +292,11 @@
 
         groups.forEach(function (g) {
           if (!g.items.length) return;
-          root.appendChild(u.el('div', { class: 'section-title', text: g.name + ' (' + g.items.length + ')' }));
+          // Tên nhóm và số đếm tách riêng để bộ dịch tra được tên
+          root.appendChild(u.el('div', { class: 'section-title' }, [
+            u.el('span', { text: g.name }),
+            u.el('span', { text: ' (' + g.items.length + ')' })
+          ]));
           var card = u.el('div', { class: 'card card--pad0' });
           g.items.forEach(function (t) { card.appendChild(taskRow(t)); });
           root.appendChild(card);

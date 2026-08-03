@@ -65,8 +65,14 @@
         u.el('div', { class: 'alert__body' }, [
           u.el('div', { class: 'alert__title', text: 'Đã vượt hạn mức!' }),
           u.el('div', {
+            // Ghép sẵn theo ngôn ngữ: bộ dịch DOM không tra được cả câu,
+            // và .toLowerCase() còn làm lệch khoá từ điển.
             text: overs.map(function (s) {
-              return s.name.toLowerCase() + ' vượt ' + M.format(s.over);
+              return App.i18n.pick(
+                s.name.toLowerCase() + ' vượt ' + M.format(s.over),
+                App.i18n.t(s.name) + ' over by ' + M.format(s.over),
+                App.i18n.t(s.name) + 'は' + M.format(s.over) + ' 超過'
+              );
             }).join(' · ')
           })
         ])
@@ -78,7 +84,11 @@
           u.el('div', { class: 'alert__title', text: 'Sắp chạm hạn mức' }),
           u.el('div', {
             text: warns.map(function (s) {
-              return s.name.toLowerCase() + ' còn ' + M.format(s.remaining);
+              return App.i18n.pick(
+                s.name.toLowerCase() + ' còn ' + M.format(s.remaining),
+                App.i18n.t(s.name) + ' — ' + M.format(s.remaining) + ' left',
+                App.i18n.t(s.name) + 'は残り ' + M.format(s.remaining)
+              );
             }).join(' · ')
           })
         ])
@@ -94,9 +104,19 @@
     if (!s) return null;
 
     var msg = s.never
-      ? 'Bạn có ' + totalTx + ' giao dịch nhưng chưa sao lưu lần nào. ' +
-        'Dữ liệu chỉ nằm trong máy — gỡ app hoặc đổi điện thoại là mất sạch.'
-      : 'Đã ' + s.days + ' ngày chưa sao lưu, trong đó có ' + s.newCount + ' giao dịch mới chưa được lưu ra file.';
+      ? App.i18n.pick(
+          'Bạn có ' + totalTx + ' giao dịch nhưng chưa sao lưu lần nào. ' +
+            'Dữ liệu chỉ nằm trong máy — gỡ app hoặc đổi điện thoại là mất sạch.',
+          'You have ' + totalTx + ' transactions and have never backed up. ' +
+            'The data lives only on this device — uninstalling the app or changing phone wipes it.',
+          '取引が' + totalTx + '件ありますが、まだ一度もバックアップしていません。' +
+            'データは端末の中だけにあり、アプリを消したり機種変更すると失われます。'
+        )
+      : App.i18n.pick(
+          'Đã ' + s.days + ' ngày chưa sao lưu, trong đó có ' + s.newCount + ' giao dịch mới chưa được lưu ra file.',
+          'It has been ' + s.days + ' days since your last backup, with ' + s.newCount + ' new transactions since.',
+          '最後のバックアップから' + s.days + '日たち、新しい取引が' + s.newCount + '件あります。'
+        );
 
     return u.el('div', { class: 'alert alert--warn', role: 'status' }, [
       u.el('span', { class: 'ico', text: '💾' }),
@@ -144,7 +164,8 @@
           class: 'small muted',
           text: App.i18n.pick(
             'Số dư tháng ' + (D.fromISO(D.today()).getMonth() + 1),
-            'Balance · ' + D.monthShort(D.today())
+            'Balance · ' + D.monthShort(D.today()),
+            (D.fromISO(D.today()).getMonth() + 1) + '月の残高'
           )
         }),
         u.el('div', {
@@ -268,7 +289,14 @@
     var overdue = due.filter(function (x) { return x.due < t; }).length;
     var card = u.el('div', { class: 'card card--pad0' });
     card.appendChild(u.el('div', { class: 'card__head', style: 'padding:16px 16px 8px;margin:0' }, [
-      u.el('h2', { class: 'card__title', text: 'Việc cần làm' + (overdue ? ' (' + overdue + ' quá hạn)' : '') }),
+      u.el('h2', {
+        class: 'card__title',
+        text: App.i18n.pick(
+          'Việc cần làm' + (overdue ? ' (' + overdue + ' quá hạn)' : ''),
+          'To do' + (overdue ? ' (' + overdue + ' overdue)' : ''),
+          'やること' + (overdue ? '（' + overdue + '件が期限切れ）' : '')
+        )
+      }),
       u.el('a', { class: 'card__link', href: '#/tasks', text: 'Xem tất cả' })
     ]));
     due.forEach(function (x) { card.appendChild(App.taskRow(x, App.router.refresh)); });

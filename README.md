@@ -23,9 +23,9 @@ App điện thoại quản lý chi tiêu và công việc theo **ngày / tuần 
 | 💳 **Phương thức thanh toán** | 14 hình thức phổ biến ở Nhật dựng sẵn: tiền mặt, thẻ tín dụng, **PayPay**, 楽天ペイ, Suica/PASMO, LINE Pay, d払い, au PAY, メルペイ, 銀行振込, 口座振替, コンビニ払い… Ghi kèm tên tiếng Nhật để dễ đối chiếu hoá đơn. Lọc và thống kê được theo phương thức |
 | 🔒 **Khoá ứng dụng** | Mã PIN 4–8 số (lưu dạng băm PBKDF2 200.000 vòng, **không bao giờ lưu PIN thô**) + mở khoá bằng vân tay/khuôn mặt qua WebAuthn. Tự khoá khi rời app, khoá tạm sau 5 lần sai |
 | 💾 **Sao lưu** | Xuất JSON (đầy đủ, kể cả ảnh) và CSV (mở bằng Excel); nhập lại có xem trước. **Tự nhắc khi lâu chưa sao lưu** |
-| 🌐 **Song ngữ** | Chuyển qua lại **Tiếng Việt ↔ English** trong Cài đặt. Đổi cả tên thứ/tháng và cách phân nhóm số (1.500 ↔ 1,500) |
+| 🌐 **Ba ngôn ngữ** | Chuyển giữa **Tiếng Việt · English · 日本語** trong Cài đặt. Đổi cả tên thứ/tháng và cách rút gọn số theo đúng thói quen bản xứ: `¥66,7N` (Việt) · `¥66.7K` (Anh) · `¥6.7万` (Nhật) |
 | 🌗 **Giao diện** | Sáng / tối / theo hệ thống. Thanh công cụ 5 tab cố định dưới màn hình |
-| 📄 **Chính sách bảo mật** | `privacy.html` song ngữ, dùng luôn được làm URL nộp cửa hàng ứng dụng |
+| 📄 **Chính sách bảo mật** | `privacy.html` ba thứ tiếng, dùng luôn được làm URL nộp cửa hàng ứng dụng |
 
 ---
 
@@ -76,7 +76,7 @@ Copy cả thư mục qua USB rồi mở `index.html` bằng trình duyệt.
 ```
 quan-ly-chi-tieu/
 ├─ index.html              Khung app (SPA), nạp các script theo thứ tự
-├─ privacy.html            Chính sách bảo mật song ngữ (trang độc lập)
+├─ privacy.html            Chính sách bảo mật 3 thứ tiếng (trang độc lập)
 ├─ manifest.webmanifest    Tên, icon, màu — để cài vào màn hình chính
 ├─ sw.js                   Service Worker: cache app để chạy offline
 ├─ css/
@@ -84,7 +84,7 @@ quan-ly-chi-tieu/
 │  └─ app.css              Layout, thanh tab, thẻ, biểu mẫu, biểu đồ
 ├─ js/
 │  ├─ util.js              DOM helper, toast, sheet, hộp xác nhận
-│  ├─ i18n.js              Từ điển Việt→Anh + dịch cây DOM khi đổi ngôn ngữ
+│  ├─ i18n.js              Từ điển Việt→Anh→Nhật + dịch cây DOM khi đổi ngôn ngữ
 │  ├─ lock.js              Khoá app: băm PIN bằng PBKDF2, vân tay qua WebAuthn
 │  ├─ dates.js             Ngày/tuần/tháng (chuỗi 'YYYY-MM-DD', không lệch múi giờ)
 │  ├─ money.js             Tiền tệ, định dạng, đọc số, quy đổi
@@ -144,6 +144,8 @@ Dữ liệu nằm trong bộ nhớ trình duyệt. Nếu bạn gỡ app, đổi 
 | Sao lưu vòng tròn có phương thức thanh toán: xuất → xoá sạch → nhập lại, khớp cả 8 kho dữ liệu | ✅ |
 | Nhắc sao lưu: chưa từng sao lưu → nhắc; 20 ngày + 2 giao dịch mới → nhắc; vừa sao lưu xong → im lặng | ✅ |
 | Chuyển sang English: quét toàn bộ 5 màn hình + bảng nhập, **không còn sót chữ tiếng Việt nào** | ✅ |
+| Chuyển sang 日本語: quét 5 màn hình + bảng nhập giao dịch + bảng nhập công việc, **sạch hoàn toàn** | ✅ |
+| Quy ước bản xứ đúng cho cả 3: `Tháng 8/2026` · `Aug 2026` · `2026年8月` — và `¥66,7N` · `¥66.7K` · `¥6.7万` | ✅ |
 
 ### Điểm còn hạn chế (nói thẳng)
 - **Bảng màu biểu đồ chưa chạy qua bộ kiểm tra mù màu tự động** vì máy không có Node.js. Đã bù bằng cách giãn tông màu thủ công, **giới hạn 8 lát** trong biểu đồ (phần dư gộp vào "Khác") và **luôn hiện chú giải ghi rõ tên + số tiền + %** — nên không bao giờ phải phân biệt bằng màu đơn thuần.
@@ -151,4 +153,4 @@ Dữ liệu nằm trong bộ nhớ trình duyệt. Nếu bạn gỡ app, đổi 
 
 ---
 
-*Phiên bản 1.1.0 · Song ngữ Việt/English · Mặc định đơn vị JPY (đổi được trong Cài đặt)*
+*Phiên bản 1.2.0 · Việt / English / 日本語 · Mặc định đơn vị JPY (đổi được trong Cài đặt)*

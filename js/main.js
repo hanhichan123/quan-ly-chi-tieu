@@ -2,7 +2,7 @@
    main.js — Khởi động app, điều hướng, thanh công cụ.
    =========================================================== */
 
-App.VERSION = '1.1.0';
+App.VERSION = '1.2.0';
 
 (function () {
   'use strict';

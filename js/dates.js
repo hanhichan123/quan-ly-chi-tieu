@@ -20,12 +20,22 @@ App.dates = (function () {
       dowShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       dowLong: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       monthShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+    ja: {
+      dowShort: ['日', '月', '火', '水', '木', '金', '土'],
+      dowLong: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+      monthShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     }
   };
 
-  function L() { return (App.i18n && App.i18n.lang === 'en') ? NAMES.en : NAMES.vi; }
-  function isEn() { return !!(App.i18n && App.i18n.lang === 'en'); }
-  function pick(vi, en) { return isEn() ? en : vi; }
+  function lang() { return (App.i18n && App.i18n.lang) || 'vi'; }
+  function L() { return NAMES[lang()] || NAMES.vi; }
+  function pick(vi, en, ja) {
+    var l = lang();
+    if (l === 'ja') return ja !== undefined ? ja : (en !== undefined ? en : vi);
+    if (l === 'en') return en !== undefined ? en : vi;
+    return vi;
+  }
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
@@ -125,50 +135,72 @@ App.dates = (function () {
     var s = fromISO(start);
     if (period === 'day') {
       var isToday = start === today();
-      return (isToday ? pick('Hôm nay, ', 'Today, ') : '') +
-        L().dowShort[s.getDay()] + ' ' + pad(s.getDate()) + '/' + pad(s.getMonth() + 1);
+      var dow = L().dowShort[s.getDay()];
+      return pick(
+        (isToday ? 'Hôm nay, ' : '') + dow + ' ' + pad(s.getDate()) + '/' + pad(s.getMonth() + 1),
+        (isToday ? 'Today, ' : '') + dow + ' ' + pad(s.getDate()) + '/' + pad(s.getMonth() + 1),
+        (isToday ? '今日・' : '') + (s.getMonth() + 1) + '月' + s.getDate() + '日(' + dow + ')'
+      );
     }
     if (period === 'week') {
       var e = fromISO(end);
-      return pad(s.getDate()) + '/' + pad(s.getMonth() + 1) + ' – ' + pad(e.getDate()) + '/' + pad(e.getMonth() + 1);
+      return pick(
+        pad(s.getDate()) + '/' + pad(s.getMonth() + 1) + ' – ' + pad(e.getDate()) + '/' + pad(e.getMonth() + 1),
+        pad(s.getDate()) + '/' + pad(s.getMonth() + 1) + ' – ' + pad(e.getDate()) + '/' + pad(e.getMonth() + 1),
+        (s.getMonth() + 1) + '/' + s.getDate() + ' – ' + (e.getMonth() + 1) + '/' + e.getDate()
+      );
     }
-    if (period === 'year') return pick('Năm ' + s.getFullYear(), s.getFullYear() + '');
-    return pick('Tháng ' + (s.getMonth() + 1) + '/' + s.getFullYear(),
-      L().monthShort[s.getMonth()] + ' ' + s.getFullYear());
+    if (period === 'year') {
+      return pick('Năm ' + s.getFullYear(), String(s.getFullYear()), s.getFullYear() + '年');
+    }
+    return pick(
+      'Tháng ' + (s.getMonth() + 1) + '/' + s.getFullYear(),
+      L().monthShort[s.getMonth()] + ' ' + s.getFullYear(),
+      s.getFullYear() + '年' + (s.getMonth() + 1) + '月'
+    );
   }
 
   function periodName(period) {
-    if (period === 'day') return pick('ngày', 'day');
-    if (period === 'week') return pick('tuần', 'week');
-    if (period === 'year') return pick('năm', 'year');
-    return pick('tháng', 'month');
+    if (period === 'day') return pick('ngày', 'day', '日');
+    if (period === 'week') return pick('tuần', 'week', '週');
+    if (period === 'year') return pick('năm', 'year', '年');
+    return pick('tháng', 'month', '月');
   }
 
-  /** '2026-08-01' -> '01/08/2026' */
+  /** '2026-08-01' -> '01/08/2026'  (tiếng Nhật: 2026年8月1日) */
   function fmt(iso) {
     var d = fromISO(iso);
-    return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+    var vi = pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+    return pick(vi, vi, d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日');
   }
 
-  /** '2026-08-01' -> '01/08' */
+  /** '2026-08-01' -> '01/08'  (tiếng Nhật: 8/1) */
   function fmtShort(iso) {
     var d = fromISO(iso);
-    return pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+    return pick(
+      pad(d.getDate()) + '/' + pad(d.getMonth() + 1),
+      pad(d.getDate()) + '/' + pad(d.getMonth() + 1),
+      (d.getMonth() + 1) + '/' + d.getDate()
+    );
   }
 
   /** Tiêu đề nhóm ngày: 'Hôm nay · Thứ sáu, 01/08' */
   function fmtDayHeading(iso) {
     var d = fromISO(iso);
     var rel = relativeDay(iso);
-    var base = L().dowLong[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1);
+    var base = pick(
+      L().dowLong[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1),
+      L().dowLong[d.getDay()] + ', ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1),
+      (d.getMonth() + 1) + '月' + d.getDate() + '日(' + L().dowShort[d.getDay()] + ')'
+    );
     return rel ? rel + ' · ' + base : base;
   }
 
   function relativeDay(iso) {
     var t = today();
-    if (iso === t) return pick('Hôm nay', 'Today');
-    if (iso === addDays(t, -1)) return pick('Hôm qua', 'Yesterday');
-    if (iso === addDays(t, 1)) return pick('Ngày mai', 'Tomorrow');
+    if (iso === t) return pick('Hôm nay', 'Today', '今日');
+    if (iso === addDays(t, -1)) return pick('Hôm qua', 'Yesterday', '昨日');
+    if (iso === addDays(t, 1)) return pick('Ngày mai', 'Tomorrow', '明日');
     return '';
   }
 
@@ -176,11 +208,11 @@ App.dates = (function () {
   function dueText(iso) {
     if (!iso) return '';
     var diff = Math.round((fromISO(iso) - fromISO(today())) / 86400000);
-    if (diff === 0) return pick('Hôm nay', 'Today');
-    if (diff === 1) return pick('Ngày mai', 'Tomorrow');
-    if (diff === -1) return pick('Quá hạn 1 ngày', '1 day overdue');
-    if (diff < 0) return pick('Quá hạn ' + (-diff) + ' ngày', (-diff) + ' days overdue');
-    if (diff <= 7) return pick('Còn ' + diff + ' ngày', diff + ' days left');
+    if (diff === 0) return pick('Hôm nay', 'Today', '今日');
+    if (diff === 1) return pick('Ngày mai', 'Tomorrow', '明日');
+    if (diff === -1) return pick('Quá hạn 1 ngày', '1 day overdue', '1日超過');
+    if (diff < 0) return pick('Quá hạn ' + (-diff) + ' ngày', (-diff) + ' days overdue', (-diff) + '日超過');
+    if (diff <= 7) return pick('Còn ' + diff + ' ngày', diff + ' days left', 'あと' + diff + '日');
     return fmtShort(iso);
   }
 

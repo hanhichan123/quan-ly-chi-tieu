@@ -902,9 +902,11 @@
       root.appendChild(u.el('div', { class: 'section-title', text: 'Giao diện & cảnh báo' }));
       var uiCard = u.el('div', { class: 'card' });
 
+      // Mỗi ngôn ngữ hiển thị bằng chính nó — đây là quy ước chung
       var langSel = u.el('select', { class: 'select', id: 'setLang' }, [
         u.el('option', { value: 'vi', text: 'Tiếng Việt', selected: (s.lang || 'vi') === 'vi' }),
-        u.el('option', { value: 'en', text: 'English', selected: s.lang === 'en' })
+        u.el('option', { value: 'en', text: 'English', selected: s.lang === 'en' }),
+        u.el('option', { value: 'ja', text: '日本語', selected: s.lang === 'ja' })
       ]);
       langSel.addEventListener('change', function () {
         // Tải lại trang là cách chắc chắn nhất: chiều Anh -> Việt không thể
@@ -1090,9 +1092,13 @@
 
   function limitsSummary() {
     var parts = [];
-    if (st.getBudget('daily')) parts.push('ngày ' + M.compact(st.getBudget('daily')));
-    if (st.getBudget('weekly')) parts.push('tuần ' + M.compact(st.getBudget('weekly')));
-    if (st.getBudget('monthly')) parts.push('tháng ' + M.compact(st.getBudget('monthly')));
+    function add(key, vi, en, ja) {
+      var v = st.getBudget(key);
+      if (v) parts.push(App.i18n.pick(vi, en, ja) + ' ' + M.compact(v));
+    }
+    add('daily', 'ngày', 'daily', '日');
+    add('weekly', 'tuần', 'weekly', '週');
+    add('monthly', 'tháng', 'monthly', '月');
     return parts.length ? parts.join(' · ') : 'Chưa đặt — chạm để thiết lập';
   }
 
